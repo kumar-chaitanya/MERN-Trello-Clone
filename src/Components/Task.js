@@ -1,8 +1,13 @@
 import React from 'react'
 
-function Task({ content }) {
+function Task({ content, handleDragStart, handleDragEnd, handleDragOver, id, isDragged }) {
   return (
-    <li>{content}</li>
+    <li
+      draggable='true'
+      onDragStart={(e) => handleDragStart(e, id)}
+      onDragEnd={handleDragEnd}
+      onDragEnter={(e) => handleDragOver(e, id)}
+      className={isDragged ? 'highlight' : null}>{content}</li>
   )
 }
 
