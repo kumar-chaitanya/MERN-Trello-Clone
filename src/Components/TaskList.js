@@ -2,13 +2,16 @@ import React, { useState } from 'react'
 import Task from './Task'
 import '../Board.css'
 
-function TaskList({addNewTask, boardID, taskList, moveTask}) {
+function TaskList({ addNewTask, boardID, taskList, moveTask }) {
 
   const [dragged, setDragged] = useState(null)
   const [inputVal, setinputVal] = useState('')
 
   const handleDragStart = (e, id) => {
-    setDragged(id)
+    e.dataTransfer.effectAllowed = 'move'
+    setTimeout(() => {
+      setDragged(id)
+    }, 0)
     console.log(e.target, id)
   }
 
@@ -17,13 +20,18 @@ function TaskList({addNewTask, boardID, taskList, moveTask}) {
     console.log(e.target)
   }
 
-  const handleDragOver = (e, moveID) => {
+  const handleDragEnter = (e, moveID) => {
     e.preventDefault()
-    e.stopPropagation()
-    if(moveID !== dragged) {
+    e.dataTransfer.dropEffect = 'move'
+    if (moveID !== dragged) {
       console.log("Dragged item id", dragged, e.target)
       moveTask(dragged, moveID, boardID)
     }
+  }
+
+  const handleDragOver = (e) => {
+    e.preventDefault()
+    e.dataTransfer.dropEffect = 'move'
   }
 
   const handleInputChange = e => {
@@ -38,13 +46,14 @@ function TaskList({addNewTask, boardID, taskList, moveTask}) {
   return (
     <div className="TaskList">
       <ul>
-        {taskList.map(task => <Task 
-                                key={task.id} 
-                                handleDragStart={handleDragStart} 
-                                handleDragEnd={handleDragEnd}
-                                handleDragOver={handleDragOver}
-                                {...task} 
-                                isDragged={dragged === task.id ? true : false} /> )}
+        {taskList.map(task => <Task
+          key={task.id}
+          handleDragStart={handleDragStart}
+          handleDragEnd={handleDragEnd}
+          handleDragOver={handleDragOver}
+          handleDragEnter={handleDragEnter}
+          {...task}
+          isDragged={dragged === task.id ? true : false} />)}
       </ul>
       <div>
         <input type="text" value={inputVal} onChange={handleInputChange} placeholder='Add a task' />
