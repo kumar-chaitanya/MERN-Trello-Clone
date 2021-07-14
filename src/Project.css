@@ -1,0 +1,10 @@
+.Project {
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  padding: 24px;
+}
+
+.Project > div {
+  flex: 0 0 auto;
+}

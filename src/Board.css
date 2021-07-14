@@ -1,0 +1,35 @@
+.Board {
+  background: #e0e0e0;
+  margin: 0 16px;
+  padding: 8px;
+  border-radius: 4px;
+  width: 250px;
+}
+
+.BoardTitle {
+  font-weight: 500;
+  font-size: 18px;
+  padding: 4px;
+  margin: 0 0 4px 0;
+  width: 100%;
+}
+
+.TaskList {
+  width: 100%;
+}
+
+.TaskList ul {
+  list-style: none;
+  margin: 0;
+  padding: 4px;
+  width: 100%;
+}
+
+.TaskList ul li {
+  margin: 8px 0;
+  width: 100%;
+  background: white;
+  padding: 8px;
+  border-radius: 4px;
+  font-size: 14px;
+}
