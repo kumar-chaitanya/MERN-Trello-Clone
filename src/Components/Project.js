@@ -1,4 +1,4 @@
-import React, { useState, useReducer } from 'react'
+import React, { useState, useReducer, useRef } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 import Board from './Board'
 import '../Project.css'
@@ -23,7 +23,7 @@ const projectReducer = (state, action) => {
       let dragItem = updatedBoards[dragBoardIdx].taskList.slice(dragItemIdx, dragItemIdx + 1)
 
       updatedBoards[dragBoardIdx].taskList.splice(dragItemIdx, 1)
-      updatedBoards[moveBoardIdx].taskList.splice(moveItemIdx, 0, dragItem)
+      updatedBoards[moveBoardIdx].taskList.splice(moveItemIdx, 0, {...dragItem[0]})
 
       return {
         ...state,
@@ -58,6 +58,46 @@ function Project() {
   const [project, dispatch] = useReducer(projectReducer, initialState)
   const [board, setBoard] = useState("")
 
+  const [isDragging, setIsDragging] = useState(false)
+  const dragged = useRef()
+
+  const handleDragStart = (e, params) => {
+    e.dataTransfer.effectAllowed = 'move'
+    dragged.current = params
+    
+    console.log(params);
+
+    setTimeout(() => {
+      setIsDragging(true)
+    }, 0)
+  }
+
+  const handleDragEnd = (a,b) => {
+    console.log(a,b);
+    setIsDragging(false)
+    dragged.current = null
+    console.log('dragend')
+  }
+
+  const handleDragEnter = (e, moveID, moveBoardID) => {
+    e.preventDefault()
+    e.dataTransfer.dropEffect = 'move'
+    if (moveID !== dragged.current.taskID) {
+      console.log("Dragged item id", dragged, e.target)
+      dispatch({type:'MOVE_TASK', 
+                dragItemID: dragged.current.taskID, 
+                moveItemID: moveID, 
+                dragBoardID: dragged.current.boardID, moveBoardID})
+      
+      dragged.current.boardID = moveBoardID
+    }
+  }
+
+  const handleDragOver = (e) => {
+    e.preventDefault()
+    e.dataTransfer.dropEffect = 'move'
+  }
+
   const addNewTask = (boardID, task) => {
     dispatch({type:'ADD_TASK', boardID, task})
   }
@@ -71,16 +111,21 @@ function Project() {
     setBoard("")
   }
 
-  const moveTask = (dragItemID, moveItemID, dragBoardID, moveBoardID) => {
-    dispatch({type:'MOVE_TASK', dragItemID, moveItemID, dragBoardID, moveBoardID})
-  }
-
   console.log("Rerendering Project Component")
   console.log('State is', project)
 
   return (
     <div className="Project">
-      {project.boards.map(board => <Board key={board.id} {...board} moveTask={moveTask} addNewTask={addNewTask} />)}
+      {project.boards.map(board => <Board 
+                                      key={board.id} 
+                                      {...board}
+                                      draggedID={isDragging && dragged.current.taskID}
+                                      isDragging={isDragging}
+                                      handleDragStart={handleDragStart}
+                                      handleDragEnter={handleDragEnter}
+                                      handleDragOver={handleDragOver} 
+                                      handleDragEnd={handleDragEnd}
+                                      addNewTask={addNewTask} />)}
       <div>
         <input type="text" value={board} onChange={handleInputChange} />
         <button onClick={addNewBoard}>Add Board</button>

@@ -5,9 +5,9 @@ function Task({ content, handleDragStart, handleDragOver, handleDragEnd, handleD
     <li
       draggable='true'
       onDragStart={(e) => handleDragStart(e, {taskID: id, boardID})}
-      onDragEnd={handleDragEnd}
+      onDrop={() => handleDragEnd(id, boardID)}
       onDragOver={handleDragOver}
-      onDragEnter={(e) => handleDragEnter(e, id)}
+      onDragEnter={(e) => handleDragEnter(e, id, boardID)}
       className={isDragged ? 'highlight' : null}>{content}</li>
   )
 }
