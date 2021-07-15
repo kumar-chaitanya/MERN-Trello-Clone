@@ -15,7 +15,7 @@ function TaskList({ addNewTask, boardID, taskList, handleDragStart, handleDragEn
   }
 
   return (
-    <div className="TaskList">
+    <div className="TaskList" onDragEnter={taskList.length === 0 ? (e) => handleDragEnter(e, '', boardID) : undefined}>
       <ul>
         {taskList.map(task => <Task
           key={task.id}

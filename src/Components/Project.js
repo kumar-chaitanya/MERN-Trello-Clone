@@ -18,7 +18,7 @@ const projectReducer = (state, action) => {
       let moveBoardIdx = updatedBoards.findIndex(board => board.id === moveBoardID)
 
       let dragItemIdx = updatedBoards[dragBoardIdx].taskList.findIndex(task => task.id === dragItemID)
-      let moveItemIdx = updatedBoards[moveBoardIdx].taskList.findIndex(task => task.id === moveItemID)
+      let moveItemIdx = moveItemID ? updatedBoards[moveBoardIdx].taskList.findIndex(task => task.id === moveItemID) : 0
 
       let dragItem = updatedBoards[dragBoardIdx].taskList.slice(dragItemIdx, dragItemIdx + 1)
 
@@ -60,23 +60,30 @@ function Project() {
 
   const [isDragging, setIsDragging] = useState(false)
   const dragged = useRef()
+  const dragItem = useRef()
+
+  const handleDragEnd = () => {
+    setIsDragging(false)
+    console.log(dragged.current);
+    dragged.current = null
+    dragItem.current.removeEventListener('dragend', handleDragEnd)
+    dragItem.current = null
+
+    console.log('dragend')
+  }
 
   const handleDragStart = (e, params) => {
     e.dataTransfer.effectAllowed = 'move'
     dragged.current = params
+    dragItem.current = e.target
+
+    dragItem.current.addEventListener('dragend', handleDragEnd)
     
     console.log(params);
 
     setTimeout(() => {
       setIsDragging(true)
     }, 0)
-  }
-
-  const handleDragEnd = (a,b) => {
-    console.log(a,b);
-    setIsDragging(false)
-    dragged.current = null
-    console.log('dragend')
   }
 
   const handleDragEnter = (e, moveID, moveBoardID) => {
