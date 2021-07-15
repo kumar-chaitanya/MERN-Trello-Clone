@@ -6,37 +6,41 @@ import '../Project.css'
 const projectReducer = (state, action) => {
   switch (action.type) {
     case "CREATE_BOARD": {
-      return { ...state, boards: [...state.boards, { id: state.boards.length + 1, title: action.title, taskList: [] }] }
+      return { ...state, boards: [...state.boards, { id: uuidv4(), title: action.title, taskList: [] }] }
     }
     
     case "MOVE_TASK": {
-      let { dragItemID, moveItemID, boardID } = action
-      let newState = JSON.parse(JSON.stringify(state))
-      boardID -= 1
-      let dragItem = newState.boards[boardID].taskList.filter(task => task.id === dragItemID)
-      let moveItem = newState.boards[boardID].taskList.filter(task => task.id === moveItemID)
+      let { dragItemID, moveItemID, dragBoardID, moveBoardID } = action
+      
+      let updatedBoards = JSON.parse(JSON.stringify(state.boards))
 
-      let dragItemIdx = newState.boards[boardID].taskList.findIndex(task => task.id === dragItemID)
-      let moveItemIdx = newState.boards[boardID].taskList.findIndex(task => task.id === moveItemID)
+      let dragBoardIdx = updatedBoards.findIndex(board => board.id === dragBoardID)
+      let moveBoardIdx = updatedBoards.findIndex(board => board.id === moveBoardID)
 
-      let updatedTaskList = [...newState.boards[boardID].taskList]
+      let dragItemIdx = updatedBoards[dragBoardIdx].taskList.findIndex(task => task.id === dragItemID)
+      let moveItemIdx = updatedBoards[moveBoardIdx].taskList.findIndex(task => task.id === moveItemID)
 
-      updatedTaskList[dragItemIdx] = { ...moveItem[0] }
-      updatedTaskList[moveItemIdx] = { ...dragItem[0] }
+      let dragItem = updatedBoards[dragBoardIdx].taskList.slice(dragItemIdx, dragItemIdx + 1)
 
-      newState.boards[boardID] = { ...newState.boards[boardID], taskList: [...updatedTaskList] }
-      return {...newState}
+      updatedBoards[dragBoardIdx].taskList.splice(dragItemIdx, 1)
+      updatedBoards[moveBoardIdx].taskList.splice(moveItemIdx, 0, dragItem)
+
+      return {
+        ...state,
+        boards: [...updatedBoards]
+      }
     }
     
     case "ADD_TASK": {
       let {boardID, task} = action
       let boards = JSON.parse(JSON.stringify(state.boards))
-      let updatedTaskList = [...boards[boardID-1].taskList, {
+      let updatedBoardIdx = boards.findIndex(board => board.id === boardID)
+      let updatedTaskList = [...boards[updatedBoardIdx].taskList, {
         id: uuidv4(),
         content: task
       }]
 
-      boards[boardID-1].taskList = [...updatedTaskList]
+      boards[updatedBoardIdx].taskList = [...updatedTaskList]
       return {...state, boards:[...boards]}
     }
     
@@ -47,36 +51,7 @@ const projectReducer = (state, action) => {
 
 const initialState = {
   projectName: "My Project",
-  boards: [{
-    id: 1,
-    title: "First Board",
-    taskList: [{
-      id: 1,
-      content: "First Task"
-    }, {
-      id: 2,
-      content: "Second Task"
-    }, {
-      id: 3,
-      content: "Third Task"
-    }]
-  }, {
-    id: 2,
-    title: "Second Board",
-    taskList: [{
-      id: 1,
-      content: "First Task"
-    }, {
-      id: 2,
-      content: "Second Task"
-    }, {
-      id: 4,
-      content: "I am the fourth task in the group"
-    }, {
-      id: 5,
-      content: "Please push the CSS to GIT today🙏"
-    }]
-  }]
+  boards: []
 }
 
 function Project() {
@@ -96,8 +71,8 @@ function Project() {
     setBoard("")
   }
 
-  const moveTask = (dragItemID, moveItemID, boardID) => {
-    dispatch({type:'MOVE_TASK', dragItemID, moveItemID, boardID})
+  const moveTask = (dragItemID, moveItemID, dragBoardID, moveBoardID) => {
+    dispatch({type:'MOVE_TASK', dragItemID, moveItemID, dragBoardID, moveBoardID})
   }
 
   console.log("Rerendering Project Component")

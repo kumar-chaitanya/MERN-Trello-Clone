@@ -1,29 +1,29 @@
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import Task from './Task'
 import '../Board.css'
 
 function TaskList({ addNewTask, boardID, taskList, moveTask }) {
 
-  const [dragged, setDragged] = useState(null)
+  const dragged = useRef()
   const [inputVal, setinputVal] = useState('')
 
-  const handleDragStart = (e, id) => {
+  const handleDragStart = (e, params) => {
     e.dataTransfer.effectAllowed = 'move'
+    console.log(params);
     setTimeout(() => {
-      setDragged(id)
+      dragged.current = params
     }, 0)
-    console.log(e.target, id)
   }
 
   const handleDragEnd = (e) => {
-    setDragged(null)
+    dragged.current = null
     console.log(e.target)
   }
 
   const handleDragEnter = (e, moveID) => {
     e.preventDefault()
     e.dataTransfer.dropEffect = 'move'
-    if (moveID !== dragged) {
+    if (moveID !== dragged.current.taskID) {
       console.log("Dragged item id", dragged, e.target)
       moveTask(dragged, moveID, boardID)
     }
@@ -52,8 +52,9 @@ function TaskList({ addNewTask, boardID, taskList, moveTask }) {
           handleDragEnd={handleDragEnd}
           handleDragOver={handleDragOver}
           handleDragEnter={handleDragEnter}
+          boardID={boardID}
           {...task}
-          isDragged={dragged === task.id ? true : false} />)}
+          isDragged={dragged.current && dragged.current.taskID === task.id ? true : false} />)}
       </ul>
       <div>
         <input type="text" value={inputVal} onChange={handleInputChange} placeholder='Add a task' />
