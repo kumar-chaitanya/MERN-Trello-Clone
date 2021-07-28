@@ -2,6 +2,8 @@ const express = require('express')
 const mongoose = require('mongoose')
 
 const projectRoutes = require('./routes/project')
+const boardRoutes = require('./routes/board')
+const taskRoutes = require('./routes/task')
 
 const app = express()
 const PORT = process.env.port || 5000
@@ -9,6 +11,8 @@ const PORT = process.env.port || 5000
 app.use(express.json())
 
 app.use('/projects', projectRoutes)
+app.use('/projects/:id/boards', boardRoutes)
+app.use('/projects/:projectId/boards/:boardId/task', taskRoutes)
 
 
 app.get('/', (req, res) => {

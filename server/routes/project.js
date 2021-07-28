@@ -4,7 +4,7 @@ const Board = require('../models/board')
 
 router.get('/', async (req, res) => {
   try {
-    const projects = await Project.find({}).populate('boards')
+    const projects = await Project.find({})
     return res.json({ projects })
   } catch (err) {
     console.log(err)
@@ -14,7 +14,10 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
   try {
     const { id } = req.params
-    const project = await Project.findOne({ _id: id })
+    const project = await Project.findOne({ _id: id }).populate({
+      path: 'boards',
+      populate: { path: 'tasks' }
+    })
 
     if (project) return res.json(project)
 
@@ -32,33 +35,6 @@ router.post('/', async (req, res) => {
     await project.save()
 
     return res.sendStatus(201)
-  } catch (err) {
-    console.log(err)
-  }
-})
-
-router.post('/:id/boards', async (req, res) => {
-  try {
-    const { id } = req.params
-    const project = await Project.findOne({ _id: id })
-
-    if(project) {
-      const { title } = req.body
-      const board = new Board({
-        title,
-        projectId: id,
-        position: project.boards.length,
-        tasks: []
-      })
-
-      await board.save()
-      project.boards.push(board)
-      await project.save()
-
-      return res.sendStatus(201)
-    }
-
-    return res.sendStatus(404)
   } catch (err) {
     console.log(err)
   }
