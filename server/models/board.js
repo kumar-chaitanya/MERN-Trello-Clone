@@ -11,10 +11,6 @@ const boardSchema = new Schema({
     type: String,
     required: true
   },
-  position: {
-    type: Number,
-    required: true
-  },
   tasks: [{
     type: Schema.Types.ObjectId,
     ref: 'Task'

@@ -2,6 +2,7 @@ const mongoose = require('mongoose')
 const router = require('express').Router({ mergeParams: true })
 const Project = require('../models/project')
 const Board = require('../models/board')
+const Task = require('../models/task')
 
 router.post('/', async (req, res) => {
   try {
@@ -13,7 +14,6 @@ router.post('/', async (req, res) => {
       const board = new Board({
         title,
         projectId: id,
-        position: project.boards.length,
         tasks: []
       })
 
@@ -25,6 +25,47 @@ router.post('/', async (req, res) => {
     }
 
     return res.sendStatus(404)
+  } catch (err) {
+    console.log(err)
+  }
+})
+
+router.put('/:boardId', async (req, res) => {
+  const { id, boardId } = req.params
+  const { title } = req.body
+
+  try {
+    const board = await Board.findOne({ _id: boardId })
+
+    if(board && (board.projectId === id)) {
+      board.title = title
+      await board.save()
+
+      return res.sendStatus(200)
+    } else {
+      return res.sendStatus(404)
+    }
+  } catch (err) {
+    console.log(err)
+  }
+})
+
+router.delete('/:boardId', async (req, res) => {
+  const { id, boardId } = req.params
+
+  try {
+    const project = await Project.findOne({ _id: id })
+
+    if(project && project.boards.includes(mongoose.Types.ObjectId(boardId))) {
+      await Task.deleteMany({ projectId: id, boardId })
+      await Board.findOneAndDelete({ _id: boardId })
+      project.boards.pull(mongoose.Types.ObjectId(boardId))
+      await project.save()
+
+      return res.sendStatus(200)
+    } else {
+      return res.sendStatus(404)
+    }
   } catch (err) {
     console.log(err)
   }
