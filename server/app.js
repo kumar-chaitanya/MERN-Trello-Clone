@@ -1,5 +1,6 @@
 const express = require('express')
 const mongoose = require('mongoose')
+const cors = require('cors')
 
 const projectRoutes = require('./routes/project')
 const boardRoutes = require('./routes/board')
@@ -8,6 +9,7 @@ const taskRoutes = require('./routes/task')
 const app = express()
 const PORT = process.env.port || 5000
 
+app.use(cors())
 app.use(express.json())
 
 app.use('/projects', projectRoutes)
