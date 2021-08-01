@@ -1,101 +1,12 @@
-const mongoose = require('mongoose')
 const router = require('express').Router({ mergeParams: true })
-const Project = require('../models/project')
-const Board = require('../models/board')
-const Task = require('../models/task')
+const controller = require('../controllers/board')
 
-router.post('/', async (req, res) => {
-  try {
-    const { id } = req.params
-    const project = await Project.findOne({ _id: id })
+router.post('/', controller.createBoard)
 
-    if(project) {
-      const { title } = req.body
-      const board = new Board({
-        title,
-        projectId: id,
-        tasks: []
-      })
+router.put('/:boardId', controller.updateBoard)
 
-      await board.save()
-      project.boards.push(board)
-      await project.save()
+router.delete('/:boardId', controller.deleteBoard)
 
-      return res.sendStatus(201)
-    }
-
-    return res.sendStatus(404)
-  } catch (err) {
-    console.log(err)
-  }
-})
-
-router.put('/:boardId', async (req, res) => {
-  const { id, boardId } = req.params
-  const { title } = req.body
-
-  try {
-    const board = await Board.findOne({ _id: boardId })
-
-    if(board && (board.projectId === id)) {
-      board.title = title
-      await board.save()
-
-      return res.sendStatus(200)
-    } else {
-      return res.sendStatus(404)
-    }
-  } catch (err) {
-    console.log(err)
-  }
-})
-
-router.delete('/:boardId', async (req, res) => {
-  const { id, boardId } = req.params
-
-  try {
-    const project = await Project.findOne({ _id: id })
-
-    if(project && project.boards.includes(mongoose.Types.ObjectId(boardId))) {
-      await Task.deleteMany({ projectId: id, boardId })
-      await Board.findOneAndDelete({ _id: boardId })
-      project.boards.pull(mongoose.Types.ObjectId(boardId))
-      await project.save()
-
-      return res.sendStatus(200)
-    } else {
-      return res.sendStatus(404)
-    }
-  } catch (err) {
-    console.log(err)
-  }
-})
-
-router.put('/moveTask', async (req, res) => {
-  const { id } = req.params
-  const { moveFromBoardId, moveToBoardId, taskId, position } = req.body
-
-  try {
-    const project = await Project.findOne({ _id: id })
-    const moveFromBoard = await Board.findOne({ _id: moveFromBoardId })
-    const moveToBoard = await Board.findOne({ _id: moveToBoardId })
-
-    if(project 
-      && moveFromBoard 
-      && moveToBoard ) {
-        moveFromBoard.tasks.pull(mongoose.Types.ObjectId(taskId))
-        moveToBoard.tasks.push({
-          $each: [mongoose.Types.ObjectId(taskId)],
-          $position: position
-        })
-
-        await moveFromBoard.save()
-        await moveToBoard.save()
-        res.sendStatus(200)
-      }
-  } catch (err) {
-    console.log(err)
-  }
-})
+router.put('/moveTask', controller.moveTask)
 
 module.exports = router
