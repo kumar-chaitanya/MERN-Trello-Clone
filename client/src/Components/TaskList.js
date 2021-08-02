@@ -4,14 +4,19 @@ import '../Board.css'
 
 function TaskList({ addNewTask, boardID, taskList, handleDragStart, handleDragEnter, handleDragOver, handleDragEnd, isDragging, draggedID }) {
   const [inputVal, setinputVal] = useState('')
+  const [loading, setLoading] = useState(false)
 
   const handleInputChange = e => {
     setinputVal(e.target.value)
   }
 
   const addNewTaskHandler = () => {
-    addNewTask(boardID, inputVal)
     setinputVal('')
+    setLoading(true)
+    setTimeout(() => {
+      addNewTask(boardID, inputVal)
+      setLoading(false)
+    }, 2000)
   }
 
   return (
@@ -27,9 +32,10 @@ function TaskList({ addNewTask, boardID, taskList, handleDragStart, handleDragEn
           {...task}
           isDragged={isDragging && draggedID === task.id ? true : false} />)}
       </ul>
-      <div>
-        <input type="text" value={inputVal} onChange={handleInputChange} placeholder='Add a task' />
-        <button onClick={addNewTaskHandler}>Add New Task</button>
+       <div>
+          {loading && <p>Adding New Task......</p>}
+          <input type="text" value={inputVal} onChange={handleInputChange} placeholder='Add a task' />
+          <button onClick={addNewTaskHandler}>Add New Task</button>
       </div>
     </div>
   )

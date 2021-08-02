@@ -1,10 +1,16 @@
-import React, { useState, useReducer, useRef } from 'react'
+import React, { useState, useReducer, useRef, useEffect } from 'react'
+import { useParams } from 'react-router-dom'
 import { v4 as uuidv4 } from 'uuid'
+
 import Board from './Board'
 import '../Project.css'
 
 const projectReducer = (state, action) => {
   switch (action.type) {
+    case "LOAD_PROJECT": {
+      return { ...action.payload, loading: false }
+    }
+
     case "CREATE_BOARD": {
       return { ...state, boards: [...state.boards, { id: uuidv4(), title: action.title, taskList: [] }] }
     }
@@ -50,13 +56,45 @@ const projectReducer = (state, action) => {
 }
 
 const initialState = {
-  projectName: "My Project",
-  boards: []
+  projectId: '',
+  projectName: '',
+  boards: [],
+  loading: true
 }
 
 function Project() {
   const [project, dispatch] = useReducer(projectReducer, initialState)
   const [board, setBoard] = useState("")
+
+  const { id } = useParams()
+
+  useEffect(() => {
+    fetch(`http://localhost:5000/projects/${id}`)
+      .then(res => res.json())
+      .then(data => {
+        let project = {
+          projectId: id,
+          projectName: data.name,
+          boards: data.boards.map(board => {
+            let taskList = board.tasks.map(task => {
+              return {
+                id: task._id,
+                content: task.content
+              }
+            })
+
+            return {
+              id: board._id,
+              title: board.title,
+              taskList
+            }
+          })
+        }
+
+        dispatch({type: 'LOAD_PROJECT', payload: project})
+      })
+      .catch(err => console.log(err)) 
+  }, [])
 
   const [isDragging, setIsDragging] = useState(false)
   const dragged = useRef()
@@ -121,23 +159,30 @@ function Project() {
   console.log("Rerendering Project Component")
   console.log('State is', project)
 
-  return (
-    <div className="Project">
-      {project.boards.map(board => <Board 
-                                      key={board.id} 
-                                      {...board}
-                                      draggedID={isDragging && dragged.current.taskID}
-                                      isDragging={isDragging}
-                                      handleDragStart={handleDragStart}
-                                      handleDragEnter={handleDragEnter}
-                                      handleDragOver={handleDragOver} 
-                                      handleDragEnd={handleDragEnd}
-                                      addNewTask={addNewTask} />)}
-      <div>
-        <input type="text" value={board} onChange={handleInputChange} />
-        <button onClick={addNewBoard}>Add Board</button>
-      </div>
+  let data
+  if(project.loading) {
+    data = <div>Loading Project.......</div>
+  } else {
+    data = <div className="Project">
+    {project.boards.map(board => <Board 
+                                    key={board.id} 
+                                    {...board}
+                                    draggedID={isDragging && dragged.current.taskID}
+                                    isDragging={isDragging}
+                                    handleDragStart={handleDragStart}
+                                    handleDragEnter={handleDragEnter}
+                                    handleDragOver={handleDragOver} 
+                                    handleDragEnd={handleDragEnd}
+                                    addNewTask={addNewTask} />)}
+    <div>
+      <input type="text" value={board} onChange={handleInputChange} />
+      <button onClick={addNewBoard}>Add Board</button>
     </div>
+  </div>
+  }
+
+  return (
+    data
   )
 }
 
