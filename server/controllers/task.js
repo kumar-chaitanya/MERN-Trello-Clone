@@ -22,7 +22,7 @@ exports.createTask = async (req, res) => {
       board.tasks.push(task)
       await board.save()
 
-      return res.sendStatus(201)
+      return res.status(201).json(task)
     }
 
     return res.sendStatus(404)

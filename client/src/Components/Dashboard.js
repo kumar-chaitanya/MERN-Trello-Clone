@@ -10,7 +10,7 @@ const useStyles = makeStyles({
 		width: '100%',
 		height: '100%',
 		background: 'cadetblue',
-		overflow: 'scroll'
+		overflowX: 'scroll'
 	}
 })
 

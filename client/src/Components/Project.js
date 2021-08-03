@@ -1,6 +1,5 @@
 import React, { useState, useReducer, useRef, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
-import { v4 as uuidv4 } from 'uuid'
 
 import Board from './Board'
 import '../Project.css'
@@ -12,12 +11,12 @@ const projectReducer = (state, action) => {
     }
 
     case "CREATE_BOARD": {
-      return { ...state, boards: [...state.boards, { id: uuidv4(), title: action.title, taskList: [] }] }
+      return { ...state, boards: [...state.boards, { id: action.id, title: action.title, taskList: [] }] }
     }
-    
+
     case "MOVE_TASK": {
       let { dragItemID, moveItemID, dragBoardID, moveBoardID } = action
-      
+
       let updatedBoards = JSON.parse(JSON.stringify(state.boards))
 
       let dragBoardIdx = updatedBoards.findIndex(board => board.id === dragBoardID)
@@ -29,27 +28,27 @@ const projectReducer = (state, action) => {
       let dragItem = updatedBoards[dragBoardIdx].taskList.slice(dragItemIdx, dragItemIdx + 1)
 
       updatedBoards[dragBoardIdx].taskList.splice(dragItemIdx, 1)
-      updatedBoards[moveBoardIdx].taskList.splice(moveItemIdx, 0, {...dragItem[0]})
+      updatedBoards[moveBoardIdx].taskList.splice(moveItemIdx, 0, { ...dragItem[0] })
 
       return {
         ...state,
         boards: [...updatedBoards]
       }
     }
-    
+
     case "ADD_TASK": {
-      let {boardID, task} = action
+      let { boardID, content, id } = action
       let boards = JSON.parse(JSON.stringify(state.boards))
       let updatedBoardIdx = boards.findIndex(board => board.id === boardID)
       let updatedTaskList = [...boards[updatedBoardIdx].taskList, {
-        id: uuidv4(),
-        content: task
+        id,
+        content
       }]
 
       boards[updatedBoardIdx].taskList = [...updatedTaskList]
-      return {...state, boards:[...boards]}
+      return { ...state, boards: [...boards] }
     }
-    
+
     default:
       return state
   }
@@ -91,10 +90,10 @@ function Project() {
           })
         }
 
-        dispatch({type: 'LOAD_PROJECT', payload: project})
+        dispatch({ type: 'LOAD_PROJECT', payload: project })
       })
-      .catch(err => console.log(err)) 
-  }, [])
+      .catch(err => console.log(err))
+  }, [id])
 
   const [isDragging, setIsDragging] = useState(false)
   const dragged = useRef()
@@ -116,7 +115,7 @@ function Project() {
     dragItem.current = e.target
 
     dragItem.current.addEventListener('dragend', handleDragEnd)
-    
+
     console.log(params);
 
     setTimeout(() => {
@@ -129,11 +128,13 @@ function Project() {
     e.dataTransfer.dropEffect = 'move'
     if (moveID !== dragged.current.taskID) {
       console.log("Dragged item id", dragged, e.target)
-      dispatch({type:'MOVE_TASK', 
-                dragItemID: dragged.current.taskID, 
-                moveItemID: moveID, 
-                dragBoardID: dragged.current.boardID, moveBoardID})
-      
+      dispatch({
+        type: 'MOVE_TASK',
+        dragItemID: dragged.current.taskID,
+        moveItemID: moveID,
+        dragBoardID: dragged.current.boardID, moveBoardID
+      })
+
       dragged.current.boardID = moveBoardID
     }
   }
@@ -143,8 +144,24 @@ function Project() {
     e.dataTransfer.dropEffect = 'move'
   }
 
-  const addNewTask = (boardID, task) => {
-    dispatch({type:'ADD_TASK', boardID, task})
+  const addNewTask = async (boardID, content) => {
+    try {
+      const res = await fetch(`http://localhost:5000/projects/${id}/boards/${boardID}/task`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ content })
+      })
+
+      if (res.ok) {
+        const task = await res.json()
+        dispatch({ type: 'ADD_TASK', boardID, content: task.content, id: task._id })
+        return true
+      }
+    } catch (err) {
+      console.log(err)
+    }
   }
 
   const handleInputChange = e => {
@@ -152,33 +169,44 @@ function Project() {
   }
 
   const addNewBoard = () => {
-    dispatch({ type: 'CREATE_BOARD', title: board })
-    setBoard("")
+    fetch(`http://localhost:5000/projects/${id}/boards`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ title: board })
+    }).then(res => {
+      if (res.ok) return res.json()
+    }).then(board => {
+      dispatch({ type: 'CREATE_BOARD', title: board.title, id: board._id })
+      setBoard("")
+    })
+    .catch(err => console.log(err))
   }
 
   console.log("Rerendering Project Component")
   console.log('State is', project)
 
   let data
-  if(project.loading) {
+  if (project.loading) {
     data = <div>Loading Project.......</div>
   } else {
     data = <div className="Project">
-    {project.boards.map(board => <Board 
-                                    key={board.id} 
-                                    {...board}
-                                    draggedID={isDragging && dragged.current.taskID}
-                                    isDragging={isDragging}
-                                    handleDragStart={handleDragStart}
-                                    handleDragEnter={handleDragEnter}
-                                    handleDragOver={handleDragOver} 
-                                    handleDragEnd={handleDragEnd}
-                                    addNewTask={addNewTask} />)}
-    <div>
-      <input type="text" value={board} onChange={handleInputChange} />
-      <button onClick={addNewBoard}>Add Board</button>
+      {project.boards.map(board => <Board
+        key={board.id}
+        {...board}
+        draggedID={isDragging && dragged.current.taskID}
+        isDragging={isDragging}
+        handleDragStart={handleDragStart}
+        handleDragEnter={handleDragEnter}
+        handleDragOver={handleDragOver}
+        handleDragEnd={handleDragEnd}
+        addNewTask={addNewTask} />)}
+      <div>
+        <input type="text" value={board} onChange={handleInputChange} />
+        <button onClick={addNewBoard}>Add Board</button>
+      </div>
     </div>
-  </div>
   }
 
   return (

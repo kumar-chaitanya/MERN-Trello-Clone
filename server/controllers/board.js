@@ -20,7 +20,7 @@ exports.createBoard = async (req, res) => {
       project.boards.push(board)
       await project.save()
 
-      return res.sendStatus(201)
+      return res.status(201).json(board)
     }
 
     return res.sendStatus(404)

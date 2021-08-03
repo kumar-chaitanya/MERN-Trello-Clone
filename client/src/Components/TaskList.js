@@ -13,10 +13,10 @@ function TaskList({ addNewTask, boardID, taskList, handleDragStart, handleDragEn
   const addNewTaskHandler = () => {
     setinputVal('')
     setLoading(true)
-    setTimeout(() => {
-      addNewTask(boardID, inputVal)
-      setLoading(false)
-    }, 2000)
+    addNewTask(boardID, inputVal)
+      .then(res => {
+        if(res) setLoading(false)
+      })
   }
 
   return (
