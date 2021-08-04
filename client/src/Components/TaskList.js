@@ -23,10 +23,11 @@ function TaskList({ boardID, taskList, draggedID }) {
   }
 
   return (
-    <div className="TaskList" onDragEnter={taskList.length === 0 ? (e) => handleDragEnter(e, '', boardID) : undefined}>
+    <div className="TaskList" onDragEnter={taskList.length === 0 ? (e) => handleDragEnter(e, '', boardID, 0) : undefined}>
       <ul>
-        {taskList.map(task => <Task
+        {taskList.map((task, idx) => <Task
           key={task.id}
+          idx={idx}
           boardID={boardID}
           {...task}
           isDragged={isDragging && draggedID === task.id ? true : false} />)}

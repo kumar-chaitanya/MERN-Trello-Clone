@@ -97,7 +97,30 @@ export const ProjectProvider = (props) => {
 
   const handleDragEnd = () => {
     setIsDragging(false)
-    console.log(dragged.current);
+
+    if (dragged.current.position !== undefined) {
+      let body = {
+        moveFromBoardId: dragged.current.moveFromBoard,
+        moveToBoardId: dragged.current.boardID,
+        taskId: dragged.current.taskID,
+        position: dragged.current.position
+      }
+      fetch(`http://localhost:5000/projects/${id}/boards/moveTask`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(body)
+      }).then(res => {
+        console.log(res)
+        if (res.ok) {
+          console.log('Task successfully Moved')
+        }
+      }).catch(err => {
+        console.log(err)
+      })
+    }
+
     dragged.current = null
     dragItem.current.removeEventListener('dragend', handleDragEnd)
     dragItem.current = null
@@ -108,6 +131,7 @@ export const ProjectProvider = (props) => {
   const handleDragStart = (e, params) => {
     e.dataTransfer.effectAllowed = 'move'
     dragged.current = params
+    dragged.current.moveFromBoard = params.boardID
     dragItem.current = e.target
 
     dragItem.current.addEventListener('dragend', handleDragEnd)
@@ -119,7 +143,7 @@ export const ProjectProvider = (props) => {
     }, 0)
   }
 
-  const handleDragEnter = (e, moveID, moveBoardID) => {
+  const handleDragEnter = (e, moveID, moveBoardID, idx) => {
     e.preventDefault()
     e.dataTransfer.dropEffect = 'move'
     if (moveID !== dragged.current.taskID) {
@@ -132,6 +156,7 @@ export const ProjectProvider = (props) => {
       })
 
       dragged.current.boardID = moveBoardID
+      dragged.current.position = idx
     }
   }
 
@@ -172,7 +197,7 @@ export const ProjectProvider = (props) => {
     }).then(board => {
       dispatch({ type: 'CREATE_BOARD', title: board.title, id: board._id })
     })
-    .catch(err => console.log(err))
+      .catch(err => console.log(err))
   }
 
   console.log("Rerendering Project Component")

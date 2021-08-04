@@ -3,10 +3,10 @@ const controller = require('../controllers/board')
 
 router.post('/', controller.createBoard)
 
+router.put('/moveTask', controller.moveTask)
+
 router.put('/:boardId', controller.updateBoard)
 
 router.delete('/:boardId', controller.deleteBoard)
-
-router.put('/moveTask', controller.moveTask)
 
 module.exports = router
