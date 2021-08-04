@@ -4,6 +4,7 @@ import { makeStyles } from '@material-ui/styles'
 
 import Projects from './Projects'
 import Project from './Project'
+import { ProjectProvider } from './Contexts/Project.context'
 
 const useStyles = makeStyles({
 	dashboard: {
@@ -24,7 +25,9 @@ export default function Dashboard() {
 					<Projects />
 				</Route>
 				<Route path="/projects/:id">
-					<Project />
+					<ProjectProvider>
+						<Project />
+					</ProjectProvider>
 				</Route>
 			</Switch>
 		</div>

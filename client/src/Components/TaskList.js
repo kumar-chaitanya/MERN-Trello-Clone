@@ -1,8 +1,11 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
+
+import { ProjectContext } from './Contexts/Project.context'
 import Task from './Task'
 import '../Board.css'
 
-function TaskList({ addNewTask, boardID, taskList, handleDragStart, handleDragEnter, handleDragOver, handleDragEnd, isDragging, draggedID }) {
+function TaskList({ boardID, taskList, draggedID }) {
+  const { addNewTask, isDragging, handleDragEnter } = useContext(ProjectContext)
   const [inputVal, setinputVal] = useState('')
   const [loading, setLoading] = useState(false)
 
@@ -24,10 +27,6 @@ function TaskList({ addNewTask, boardID, taskList, handleDragStart, handleDragEn
       <ul>
         {taskList.map(task => <Task
           key={task.id}
-          handleDragStart={handleDragStart}
-          handleDragEnd={handleDragEnd}
-          handleDragOver={handleDragOver}
-          handleDragEnter={handleDragEnter}
           boardID={boardID}
           {...task}
           isDragged={isDragging && draggedID === task.id ? true : false} />)}
