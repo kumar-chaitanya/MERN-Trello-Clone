@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react'
 
 
-import { ProjectContext } from './Contexts/Project.context'
+import { ProjectContext } from '../Contexts/Project.context'
 import Board from './Board'
 import '../Project.css'
 

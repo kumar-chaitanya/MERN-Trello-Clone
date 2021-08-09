@@ -34,7 +34,7 @@ exports.createProject = async (req, res) => {
 
     await project.save()
 
-    return res.sendStatus(201)
+    return res.status(201).json(project)
   } catch (err) {
     console.log(err)
   }

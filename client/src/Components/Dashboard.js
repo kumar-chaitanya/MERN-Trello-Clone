@@ -4,12 +4,12 @@ import { makeStyles } from '@material-ui/styles'
 
 import Projects from './Projects'
 import Project from './Project'
-import { ProjectProvider } from './Contexts/Project.context'
+import { ProjectProvider } from '../Contexts/Project.context'
 
 const useStyles = makeStyles({
 	dashboard: {
 		width: '100%',
-		height: '100%',
+		height: '90vh',
 		background: 'cadetblue',
 		overflowX: 'scroll'
 	}

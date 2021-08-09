@@ -78,16 +78,19 @@ exports.moveTask = async (req, res) => {
     const project = await Project.findOne({ _id: id })
     const moveFromBoard = await Board.findOne({ _id: moveFromBoardId })
     const moveToBoard = await Board.findOne({ _id: moveToBoardId })
+    const task = await Task.findOne({ _id: taskId })
 
     if(project 
       && moveFromBoard 
       && moveToBoard ) {
+        task.boardId = moveToBoardId
         moveFromBoard.tasks.pull(mongoose.Types.ObjectId(taskId))
         moveToBoard.tasks.push({
           $each: [mongoose.Types.ObjectId(taskId)],
           $position: position
         })
 
+        await task.save()
         await moveFromBoard.save()
         await moveToBoard.save()
         res.sendStatus(200)

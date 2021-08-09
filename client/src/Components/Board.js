@@ -1,4 +1,5 @@
 import React from 'react'
+
 import BoardTitle from './BoardTitle'
 import TaskList from './TaskList'
 import '../Board.css'
@@ -6,7 +7,7 @@ import '../Board.css'
 function Board({ id, title, taskList, draggedID}) {
 	return (
 		<div className="Board">
-			<BoardTitle title={title} />
+			<BoardTitle title={title} id={id} />
 			<TaskList taskList={taskList}  
 								boardID={id}
 								draggedID={draggedID} />

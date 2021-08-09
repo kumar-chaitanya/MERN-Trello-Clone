@@ -1,67 +1,12 @@
-import React, { useState, useReducer, useRef, useEffect, createContext } from 'react'
+import React, { useState, useRef, useEffect, createContext } from 'react'
 import { useParams } from 'react-router-dom'
+
+import { useProjectReducer } from '../Reducers/project.reducer'
 
 export const ProjectContext = createContext()
 
-const initialState = {
-  projectId: '',
-  projectName: '',
-  boards: [],
-  loading: true
-}
-
-const projectReducer = (state, action) => {
-  switch (action.type) {
-    case "LOAD_PROJECT": {
-      return { ...action.payload, loading: false }
-    }
-
-    case "CREATE_BOARD": {
-      return { ...state, boards: [...state.boards, { id: action.id, title: action.title, taskList: [] }] }
-    }
-
-    case "MOVE_TASK": {
-      let { dragItemID, moveItemID, dragBoardID, moveBoardID } = action
-
-      let updatedBoards = JSON.parse(JSON.stringify(state.boards))
-
-      let dragBoardIdx = updatedBoards.findIndex(board => board.id === dragBoardID)
-      let moveBoardIdx = updatedBoards.findIndex(board => board.id === moveBoardID)
-
-      let dragItemIdx = updatedBoards[dragBoardIdx].taskList.findIndex(task => task.id === dragItemID)
-      let moveItemIdx = moveItemID ? updatedBoards[moveBoardIdx].taskList.findIndex(task => task.id === moveItemID) : 0
-
-      let dragItem = updatedBoards[dragBoardIdx].taskList.slice(dragItemIdx, dragItemIdx + 1)
-
-      updatedBoards[dragBoardIdx].taskList.splice(dragItemIdx, 1)
-      updatedBoards[moveBoardIdx].taskList.splice(moveItemIdx, 0, { ...dragItem[0] })
-
-      return {
-        ...state,
-        boards: [...updatedBoards]
-      }
-    }
-
-    case "ADD_TASK": {
-      let { boardID, content, id } = action
-      let boards = JSON.parse(JSON.stringify(state.boards))
-      let updatedBoardIdx = boards.findIndex(board => board.id === boardID)
-      let updatedTaskList = [...boards[updatedBoardIdx].taskList, {
-        id,
-        content
-      }]
-
-      boards[updatedBoardIdx].taskList = [...updatedTaskList]
-      return { ...state, boards: [...boards] }
-    }
-
-    default:
-      return state
-  }
-}
-
 export const ProjectProvider = (props) => {
-  const [project, dispatch] = useReducer(projectReducer, initialState)
+ const [project, dispatch] = useProjectReducer()
   const { id } = useParams()
 
   useEffect(() => {
@@ -89,7 +34,7 @@ export const ProjectProvider = (props) => {
         dispatch({ type: 'LOAD_PROJECT', payload: project })
       })
       .catch(err => console.log(err))
-  }, [id])
+  }, [])
 
   const [isDragging, setIsDragging] = useState(false)
   const dragged = useRef()
@@ -166,6 +111,8 @@ export const ProjectProvider = (props) => {
   }
 
   const addNewTask = async (boardID, content) => {
+    if(!content) return
+
     try {
       const res = await fetch(`http://localhost:5000/projects/${id}/boards/${boardID}/task`, {
         method: 'POST',
@@ -185,7 +132,21 @@ export const ProjectProvider = (props) => {
     }
   }
 
+  const deleteTask = async (boardID, taskID) => {
+    try {
+      const res = await fetch(`http://localhost:5000/projects/${id}/boards/${boardID}/task/${taskID}`, {
+        method: 'DELETE'
+      })
+
+      if(res.ok) dispatch({ type: 'DELETE_TASK', boardID, taskID })
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
   const addNewBoard = (board) => {
+    if(!board) return
+    
     fetch(`http://localhost:5000/projects/${id}/boards`, {
       method: 'POST',
       headers: {
@@ -200,11 +161,24 @@ export const ProjectProvider = (props) => {
       .catch(err => console.log(err))
   }
 
-  console.log("Rerendering Project Component")
-  console.log('State is', project)
+  const deleteBoard = async (boardID) => {
+    try {
+      const res = await fetch(`http://localhost:5000/projects/${id}/boards/${boardID}`, {
+        method: 'DELETE'
+      })
+
+      if(res.ok) dispatch({ type: 'DELETE_BOARD', boardID })
+    } catch (err) {
+      console.log(err)
+    }
+  }
 
   return (
-    <ProjectContext.Provider value={{ project, dragged, isDragging, handleDragStart, handleDragEnter, handleDragOver, addNewTask, addNewBoard }}>
+    <ProjectContext.Provider value={{ 
+      project, dragged, isDragging,
+      handleDragStart, handleDragEnter, handleDragOver,
+      addNewTask, deleteTask, addNewBoard,
+      deleteBoard }}>
       {props.children}
     </ProjectContext.Provider>
   )

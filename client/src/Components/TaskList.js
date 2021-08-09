@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react'
 
-import { ProjectContext } from './Contexts/Project.context'
+import { ProjectContext } from '../Contexts/Project.context'
 import Task from './Task'
 import '../Board.css'
 

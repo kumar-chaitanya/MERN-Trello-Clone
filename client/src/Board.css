@@ -6,14 +6,6 @@
   width: 250px;
 }
 
-.BoardTitle {
-  font-weight: 500;
-  font-size: 18px;
-  padding: 4px;
-  margin: 0 0 4px 0;
-  width: 100%;
-}
-
 .TaskList {
   width: 100%;
 }
@@ -23,18 +15,4 @@
   margin: 0;
   padding: 4px;
   width: 100%;
-}
-
-.TaskList ul li {
-  margin: 12px 0;
-  width: 100%;
-  background: white;
-  padding: 8px;
-  font-size: 14px;
-  cursor: move;
-}
-
-.TaskList ul li.highlight {
-  color: white;
-  background: goldenrod;
 }
