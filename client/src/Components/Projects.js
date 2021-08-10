@@ -1,35 +1,22 @@
 import React, { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
-import { Grid, Card, CardContent, CardActions, Button, Typography } from '@material-ui/core'
+import { Grid } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core'
 
-import DeleteButton from './DeleteButton'
+import ProjectInfo from './ProjectInfo'
+import AddInput from './AddInput'
 
 const useStyle = makeStyles({
   'ProjectContainer': {
     padding: '24px'
-  },
-  'Project': {
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-    padding: '16px',
-    height: '200px'
-  },
-  'ProjectTitle': {
-    display: 'flex',
-    justifyContent: 'space-between',
-    fontSize: '18px'
   }
 })
 
 function Projects() {
   const [loading, setLoading] = useState(true)
   const [projects, setProjects] = useState()
-  const [inputVal, setinputVal] = useState('')
   const classes = useStyle()
 
-  const handleNewProject = async () => {
+  const handleNewProject = async (inputVal) => {
     if(!inputVal) return
 
     try {
@@ -48,7 +35,6 @@ function Projects() {
           name: project.name,
           createdAt: project.createdAt
         }])
-        setinputVal('')
       }
     } catch (err) {
       console.log(err)
@@ -94,33 +80,9 @@ function Projects() {
 
   if (!loading) {
     data = <>
-      {projects.map(project => {
-        return (
-          <Grid item lg={3} key={project.id}>
-            <Card className={classes['Project']}>
-              <CardContent>
-                <Typography className={classes['ProjectTitle']} variant="h6">
-                  {project.name}
-                  <DeleteButton onClick={() => handleDeleteProject(project.id)} />
-                </Typography>
-                <Typography style={{ fontSize: '12px' }} variant="h6" color="textSecondary">
-                  Created On: {(new Date(project.createdAt)).toDateString()}
-                </Typography>
-              </CardContent>
-              <CardActions>
-                <Button size="small" variant='contained' color='primary'>
-                  <Link style={{ textDecoration: 'none', fontSize: '10px', color: 'white' }} to={`/projects/${project.id}`}>
-                    See Project
-                  </Link>
-                </Button>
-              </CardActions>
-            </Card>
-          </Grid>
-        )
-      })}
+      {projects.map(project => <ProjectInfo {...project} handleDeleteProject={handleDeleteProject} />)}
       <Grid item lg={3}>
-        <input type="text" value={inputVal} onChange={(e) => setinputVal(e.target.value)} placeholder='Project Name' />
-        <button onClick={handleNewProject}>Create Project</button>
+        <AddInput placeholder="Enter Project Name" btnText="Create" btnClick={handleNewProject} />
       </Grid>
     </>
   }

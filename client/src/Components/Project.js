@@ -1,23 +1,14 @@
-import React, { useState, useContext } from 'react'
+import React, { useContext } from 'react'
 
 
 import { ProjectContext } from '../Contexts/Project.context'
 import Board from './Board'
+import AddInput from './AddInput'
 import '../Project.css'
 
 
 function Project() {
   const { project, dragged, isDragging, addNewBoard } = useContext(ProjectContext)
-  const [board, setBoard] = useState('')
-
-  const handleInputChange = (e) => {
-    setBoard(e.target.value)
-  }
-
-  const handleAddNewBoard = () => {
-    addNewBoard(board)
-    setBoard('')
-  }
 
   let data
   if (project.loading) {
@@ -30,10 +21,7 @@ function Project() {
         draggedID={isDragging && dragged.current.taskID}
         isDragging={isDragging} /> )
       }
-      <div>
-        <input type="text" value={board} onChange={handleInputChange} />
-        <button onClick={handleAddNewBoard}>Add Board</button>
-      </div>
+      <AddInput placeholder="Enter Board Title" btnText="Create" btnClick={addNewBoard} />
     </div>
   }
   return (

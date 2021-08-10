@@ -1,20 +1,31 @@
 import React, { useState, useContext } from 'react'
+import { makeStyles } from '@material-ui/core'
 
 import { ProjectContext } from '../Contexts/Project.context'
 import Task from './Task'
-import '../Board.css'
+import AddInput from './AddInput'
+
+const useStyle = makeStyles({
+  'TaskContainer': {
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center'
+  },
+  'TaskList': {
+    listStyle: 'none',
+    margin: 0,
+    padding: '4px',
+    width: '100%'
+  }
+})
 
 function TaskList({ boardID, taskList, draggedID }) {
+  const classes = useStyle()
   const { addNewTask, isDragging, handleDragEnter } = useContext(ProjectContext)
-  const [inputVal, setinputVal] = useState('')
   const [loading, setLoading] = useState(false)
 
-  const handleInputChange = e => {
-    setinputVal(e.target.value)
-  }
-
-  const addNewTaskHandler = () => {
-    setinputVal('')
+  const handleNewTask = (inputVal) => {
     setLoading(true)
     addNewTask(boardID, inputVal)
       .then(res => {
@@ -23,8 +34,8 @@ function TaskList({ boardID, taskList, draggedID }) {
   }
 
   return (
-    <div className="TaskList" onDragEnter={taskList.length === 0 ? (e) => handleDragEnter(e, '', boardID, 0) : undefined}>
-      <ul>
+    <div className={classes['TaskContainer']} onDragEnter={taskList.length === 0 ? (e) => handleDragEnter(e, '', boardID, 0) : undefined}>
+      <ul className={classes['TaskList']}>
         {taskList.map((task, idx) => <Task
           key={task.id}
           idx={idx}
@@ -32,11 +43,10 @@ function TaskList({ boardID, taskList, draggedID }) {
           {...task}
           isDragged={isDragging && draggedID === task.id ? true : false} />)}
       </ul>
-       <div>
+       <>
           {loading && <p>Adding New Task......</p>}
-          <input type="text" value={inputVal} onChange={handleInputChange} placeholder='Add a task' />
-          <button onClick={addNewTaskHandler}>Add New Task</button>
-      </div>
+          <AddInput placeholder="Enter Your Task" btnText="Create" btnClick={handleNewTask} />
+      </>
     </div>
   )
 }

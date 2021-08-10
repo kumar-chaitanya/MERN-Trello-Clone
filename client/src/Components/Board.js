@@ -1,12 +1,24 @@
 import React from 'react'
+import { makeStyles } from '@material-ui/core'
 
 import BoardTitle from './BoardTitle'
 import TaskList from './TaskList'
-import '../Board.css'
+
+const useStyle = makeStyles({
+	'Board': {
+		background: '#e0e0e0',
+		margin: '0 16px',
+		padding: '8px',
+		borderRadius: '4px',
+		width: '250px'
+	}
+})
 
 function Board({ id, title, taskList, draggedID}) {
+	const classes = useStyle()
+
 	return (
-		<div className="Board">
+		<div className={classes['Board']}>
 			<BoardTitle title={title} id={id} />
 			<TaskList taskList={taskList}  
 								boardID={id}
