@@ -49,10 +49,10 @@ const projectReducer = (state, action) => {
     }
 
     case "ADD_TASK": {
-      let { boardID, content, id } = action
-      let boards = JSON.parse(JSON.stringify(state.boards))
-      let updatedBoardIdx = boards.findIndex(board => board.id === boardID)
-      let updatedTaskList = [...boards[updatedBoardIdx].taskList, {
+      const { boardID, content, id } = action
+      const boards = JSON.parse(JSON.stringify(state.boards))
+      const updatedBoardIdx = boards.findIndex(board => board.id === boardID)
+      const updatedTaskList = [...boards[updatedBoardIdx].taskList, {
         id,
         content
       }]
@@ -61,11 +61,28 @@ const projectReducer = (state, action) => {
       return { ...state, boards: [...boards] }
     }
 
+    case "UPDATE_TASK": {
+      const { boardID, taskID, content } = action
+      const boards = [...state.boards]
+      const boardIdx = boards.findIndex(board => board.id === boardID)
+      const taskIdx = boards[boardIdx].taskList.findIndex(task => task.id === taskID)
+
+      let updatedTaskList = JSON.parse(JSON.stringify(boards[boardIdx].taskList))
+      updatedTaskList[taskIdx].content = content
+
+      boards[boardIdx] = {
+        ...boards[boardIdx],
+        taskList: [...updatedTaskList]
+      }
+
+      return { ...state, boards: [...boards] }
+    }
+
     case "DELETE_TASK": {
-      let { boardID, taskID } = action
-      let boards = JSON.parse(JSON.stringify(state.boards))
-      let boardIdx = boards.findIndex(board => board.id === boardID)
-      let taskIdx = boards[boardIdx].taskList.findIndex(task => task.id === taskID)
+      const { boardID, taskID } = action
+      const boards = JSON.parse(JSON.stringify(state.boards))
+      const boardIdx = boards.findIndex(board => board.id === boardID)
+      const taskIdx = boards[boardIdx].taskList.findIndex(task => task.id === taskID)
 
       boards[boardIdx].taskList.splice(taskIdx, 1)
       return { ...state, boards: [...boards] }

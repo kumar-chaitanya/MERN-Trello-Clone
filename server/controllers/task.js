@@ -42,7 +42,7 @@ exports.updateTask = async (req, res) => {
       task.content = content
       await task.save()
 
-      return res.sendStatus(200)
+      return res.status(200).json(task)
     } else {
       return res.sendStatus(404)
     }

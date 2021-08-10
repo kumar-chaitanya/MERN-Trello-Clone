@@ -6,7 +6,7 @@ import { useProjectReducer } from '../Reducers/project.reducer'
 export const ProjectContext = createContext()
 
 export const ProjectProvider = (props) => {
- const [project, dispatch] = useProjectReducer()
+  const [project, dispatch] = useProjectReducer()
   const { id } = useParams()
 
   useEffect(() => {
@@ -111,7 +111,7 @@ export const ProjectProvider = (props) => {
   }
 
   const addNewTask = async (boardID, content) => {
-    if(!content) return
+    if (!content) return
 
     try {
       const res = await fetch(`http://localhost:5000/projects/${id}/boards/${boardID}/task`, {
@@ -132,21 +132,43 @@ export const ProjectProvider = (props) => {
     }
   }
 
+  const updateTask = async (boardID, taskID, content) => {
+    if (!content) return
+
+    try {
+      const res = await fetch(`http://localhost:5000/projects/${id}/boards/${boardID}/task/${taskID}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ content })
+      })
+
+      if (res.ok) {
+        const task = await res.json()
+        dispatch({ type: 'UPDATE_TASK', boardID, content: task.content, taskID: task._id })
+        return true
+      }
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
   const deleteTask = async (boardID, taskID) => {
     try {
       const res = await fetch(`http://localhost:5000/projects/${id}/boards/${boardID}/task/${taskID}`, {
         method: 'DELETE'
       })
 
-      if(res.ok) dispatch({ type: 'DELETE_TASK', boardID, taskID })
+      if (res.ok) dispatch({ type: 'DELETE_TASK', boardID, taskID })
     } catch (err) {
       console.log(err)
     }
   }
 
   const addNewBoard = (board) => {
-    if(!board) return
-    
+    if (!board) return
+
     fetch(`http://localhost:5000/projects/${id}/boards`, {
       method: 'POST',
       headers: {
@@ -167,18 +189,19 @@ export const ProjectProvider = (props) => {
         method: 'DELETE'
       })
 
-      if(res.ok) dispatch({ type: 'DELETE_BOARD', boardID })
+      if (res.ok) dispatch({ type: 'DELETE_BOARD', boardID })
     } catch (err) {
       console.log(err)
     }
   }
 
   return (
-    <ProjectContext.Provider value={{ 
+    <ProjectContext.Provider value={{
       project, dragged, isDragging,
       handleDragStart, handleDragEnter, handleDragOver,
-      addNewTask, deleteTask, addNewBoard,
-      deleteBoard }}>
+      addNewTask, updateTask, deleteTask,
+      addNewBoard, deleteBoard
+    }}>
       {props.children}
     </ProjectContext.Provider>
   )
