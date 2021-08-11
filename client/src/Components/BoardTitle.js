@@ -2,7 +2,7 @@ import React, { useContext } from 'react'
 import { makeStyles } from '@material-ui/styles'
 
 import { ProjectContext } from '../Contexts/Project.context'
-import DeleteButton from './DeleteButton'
+import DeleteButton from './Buttons/DeleteButton'
 
 const useStyle = makeStyles({
   'BoardTitle': {

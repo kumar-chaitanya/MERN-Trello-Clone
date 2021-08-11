@@ -2,9 +2,9 @@ import React, { useState, useContext } from 'react'
 import { makeStyles } from '@material-ui/styles'
 
 import { ProjectContext } from '../Contexts/Project.context'
-import UpdateArea from './UpdateArea'
-import DeleteButton from './DeleteButton'
-import EditButton from './EditButton'
+import UpdateArea from './Form-Inputs/UpdateArea'
+import DeleteButton from './Buttons/DeleteButton'
+import EditButton from './Buttons/EditButton'
 
 const useStyle = makeStyles({
   'TaskItem': {

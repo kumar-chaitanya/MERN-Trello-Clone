@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { makeStyles } from '@material-ui/core'
 import { Grid, Card, CardContent, Typography, CardActions, Button } from '@material-ui/core'
 
-import DeleteButton from './DeleteButton'
+import DeleteButton from './Buttons/DeleteButton'
 
 const useStyle = makeStyles({
   'Project': {

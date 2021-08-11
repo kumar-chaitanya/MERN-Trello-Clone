@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core'
 
 import { ProjectContext } from '../Contexts/Project.context'
 import Task from './Task'
-import AddInput from './AddInput'
+import AddInput from './Form-Inputs/AddInput'
 
 const useStyle = makeStyles({
   'TaskContainer': {

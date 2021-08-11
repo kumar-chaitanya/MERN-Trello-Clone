@@ -3,7 +3,7 @@ import { Grid } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core'
 
 import ProjectInfo from './ProjectInfo'
-import AddInput from './AddInput'
+import AddInput from './Form-Inputs/AddInput'
 
 const useStyle = makeStyles({
   'ProjectContainer': {

@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import { makeStyles } from '@material-ui/core'
 
-import CancelButton from './CancelButton'
-import CheckButton from './CheckButton'
+import CancelButton from '../Buttons/CancelButton'
+import CheckButton from '../Buttons/CheckButton'
 
 const useStyle = makeStyles({
   'UpdateContainer': {

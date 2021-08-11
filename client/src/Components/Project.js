@@ -3,7 +3,7 @@ import React, { useContext } from 'react'
 
 import { ProjectContext } from '../Contexts/Project.context'
 import Board from './Board'
-import AddInput from './AddInput'
+import AddInput from './Form-Inputs/AddInput'
 import '../Project.css'
 
 
