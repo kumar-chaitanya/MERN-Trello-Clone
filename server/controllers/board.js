@@ -40,7 +40,7 @@ exports.updateBoard = async (req, res) => {
       board.title = title
       await board.save()
 
-      return res.sendStatus(200)
+      return res.status(200).json(board)
     } else {
       return res.sendStatus(404)
     }

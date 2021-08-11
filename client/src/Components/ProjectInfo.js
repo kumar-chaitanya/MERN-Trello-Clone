@@ -3,7 +3,9 @@ import { Link } from 'react-router-dom'
 import { makeStyles } from '@material-ui/core'
 import { Grid, Card, CardContent, Typography, CardActions, Button } from '@material-ui/core'
 
+import UpdateInput from './Form-Inputs/UpdateInput'
 import DeleteButton from './Buttons/DeleteButton'
+import EditButton from './Buttons/EditButton'
 
 const useStyle = makeStyles({
   'Project': {
@@ -16,21 +18,47 @@ const useStyle = makeStyles({
   'ProjectTitle': {
     display: 'flex',
     justifyContent: 'space-between',
-    fontSize: '18px'
+    alignItems: 'center',
+    fontSize: '18px',
+    '& > span': {
+      width: '40px',
+      display: 'flex',
+      justifyContent: 'space-between'
+    }
   }
 })
 
-export default function ProjectInfo({ name, id, createdAt, handleDeleteProject }) {
+export default function ProjectInfo({ name, id, createdAt, handleUpdateProject, handleDeleteProject }) {
+  const [editMode, setEditMode] = useState(false)
   const classes = useStyle()
+
+  const handleEditProject = () => {
+    setEditMode(true)
+  }
+
+  const handleCheck = async (name) => {
+    const res = await handleUpdateProject(id, name)
+    if(res) setEditMode(false)
+  }
+
+  const handleCancel = () => {
+    setEditMode(false)
+  }
 
   return (
     <Grid item lg={3}>
       <Card className={classes['Project']}>
         <CardContent>
-          <Typography className={classes['ProjectTitle']} variant="h6">
-            {name}
-            <DeleteButton onClick={() => handleDeleteProject(id)} />
-          </Typography>
+          {
+            !editMode ? <Typography className={classes['ProjectTitle']} variant="h6">
+                        {name}
+                        <span>
+                          <EditButton onClick={handleEditProject} />
+                          <DeleteButton onClick={() => handleDeleteProject(id)} />
+                        </span>
+                       </Typography>
+                       : <UpdateInput value={name} handleCheck={handleCheck} handleCancel={handleCancel} />
+          }
           <Typography style={{ fontSize: '12px' }} variant="h6" color="textSecondary">
             Created On: {(new Date(createdAt)).toDateString()}
           </Typography>

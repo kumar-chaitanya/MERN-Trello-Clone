@@ -17,7 +17,7 @@ function Projects() {
   const classes = useStyle()
 
   const handleNewProject = async (inputVal) => {
-    if(!inputVal) return
+    if (!inputVal) return
 
     try {
       const res = await fetch(`http://localhost:5000/projects`, {
@@ -41,13 +41,39 @@ function Projects() {
     }
   }
 
+  const handleUpdateProject = async (id, name) => {
+    if(!name) return
+
+    try {
+      const res = await fetch(`http://localhost:5000/projects/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ name })
+      })
+
+      if (res.ok) {
+        setProjects((state) => {
+          state = [...state]
+          const projectIdx = state.findIndex(project => project.id === id)
+          state[projectIdx].name = name
+          return [...state]
+        })
+        return true
+      }
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
   const handleDeleteProject = async (id) => {
     try {
       const res = await fetch(`http://localhost:5000/projects/${id}`, {
         method: 'DELETE'
       })
 
-      if(res.ok) {
+      if (res.ok) {
         setProjects((state) => {
           state = [...state]
           state.splice(state.findIndex(project => project.id === id), 1)
@@ -80,7 +106,11 @@ function Projects() {
 
   if (!loading) {
     data = <>
-      {projects.map(project => <ProjectInfo {...project} handleDeleteProject={handleDeleteProject} />)}
+      {projects.map(project => <ProjectInfo 
+                                  {...project} 
+                                  key={project.id} 
+                                  handleUpdateProject={handleUpdateProject} 
+                                  handleDeleteProject={handleDeleteProject} />)}
       <Grid item lg={3}>
         <AddInput placeholder="Enter Project Name" btnText="Create" btnClick={handleNewProject} />
       </Grid>

@@ -183,6 +183,27 @@ export const ProjectProvider = (props) => {
       .catch(err => console.log(err))
   }
 
+  const updateBoard = async (boardID, title) => {
+    if (!title) return
+
+    try {
+      const res = await fetch(`http://localhost:5000/projects/${id}/boards/${boardID}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ title })
+      })
+
+      if (res.ok) {
+        dispatch({ type: 'UPDATE_BOARD', boardID, title })
+        return true
+      }
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
   const deleteBoard = async (boardID) => {
     try {
       const res = await fetch(`http://localhost:5000/projects/${id}/boards/${boardID}`, {
@@ -200,7 +221,7 @@ export const ProjectProvider = (props) => {
       project, dragged, isDragging,
       handleDragStart, handleDragEnter, handleDragOver,
       addNewTask, updateTask, deleteTask,
-      addNewBoard, deleteBoard
+      addNewBoard, updateBoard, deleteBoard
     }}>
       {props.children}
     </ProjectContext.Provider>

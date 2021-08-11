@@ -17,6 +17,18 @@ const projectReducer = (state, action) => {
       return { ...state, boards: [...state.boards, { id: action.id, title: action.title, taskList: [] }] }
     }
 
+    case "UPDATE_BOARD": {
+      const { boardID, title } = action
+      const boards = [...state.boards]
+      const boardIdx = boards.findIndex(board => board.id === boardID)
+      boards[boardIdx].title = title
+
+      return {
+        ...state,
+        boards: [...boards]
+      }
+    }
+
     case "DELETE_BOARD": {
       const { boardID } = action
       const boards = [...state.boards]

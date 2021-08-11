@@ -6,31 +6,30 @@ import CheckButton from '../Buttons/CheckButton'
 
 const useStyle = makeStyles({
   'UpdateContainer': {
-    position: 'relative',
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
     width: '100%',
+    padding: '4px',
     '& > span': {
-      position: 'absolute',
-      width: '40px',
+      width: '50px',
       display: 'flex',
       justifyContent: 'space-between',
-      bottom: '10px',
-      right: '10px'
     },
-    '& > textarea': {
+    '& > input': {
       width: '100%',
-      padding: '8px',
+      height: '25px',
+      padding: '4px',
       lineHeight: '1.4em',
       border: 'none',
-      resize: 'none',
-      outline: 'none'
-    },
-    '& > textarea:focus': {
-      outline: 'solid green 1px'
+      outline: 'none',
+      background: 'transparent',
+      borderBottom: 'green solid 1px'
     }
   }
 })
 
-export default function UpdateArea(props) {
+export default function UpdateInput(props) {
   const [input, setInput] = useState(props.value)
   const classes = useStyle()
 
@@ -44,8 +43,7 @@ export default function UpdateArea(props) {
 
   return (
     <div className={classes['UpdateContainer']}>
-      <textarea onChange={handleInputChange} rows={8} defaultValue={input} autoFocus>
-      </textarea>
+      <input type="text" onChange={handleInputChange} value={input} autoFocus />
       <span>
         <CheckButton onClick={handleCheck} />
         <CancelButton onClick={props.handleCancel} />
