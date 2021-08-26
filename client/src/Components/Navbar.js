@@ -1,7 +1,9 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import { AppBar, Toolbar, Typography } from '@material-ui/core'
 import { Link } from 'react-router-dom'
+
+import { AuthContext } from '../Contexts/Auth.context'
 
 const useStyles = makeStyles({
   navbar: {
@@ -21,6 +23,30 @@ const useStyles = makeStyles({
 
 function Navbar() {
   const classes = useStyles()
+  const { authLoading, isAuthenticated, user, logout } = useContext(AuthContext)
+
+  let navList = null
+
+  if (authLoading) {
+    navList = <Typography>Loading...</Typography>
+  } else if (!authLoading && isAuthenticated) {
+    navList = <>
+      <Typography>{user.username}</Typography>
+      <Typography>
+        <Link to="/projects">My Projects</Link>
+      </Typography>
+      <Typography onClick={logout}>Signout</Typography>
+    </>
+  } else {
+    navList = <>
+      <Typography>
+        <Link to="/register">Register</Link>
+      </Typography>
+      <Typography>
+        <Link to="/login">Login</Link>
+      </Typography>
+    </>
+  }
 
   return (
     <AppBar position="static" className={classes.navbar}>
@@ -28,12 +54,7 @@ function Navbar() {
         <Typography variant="h5">Trello Clone</Typography>
       </Toolbar>
       <Toolbar className={classes.navList}>
-        <Typography>
-          <Link to="/projects">My Projects</Link>
-        </Typography>
-        <Typography>
-          <Link to="/">Signout</Link>
-        </Typography>
+        {navList}
       </Toolbar>
     </AppBar>
   )

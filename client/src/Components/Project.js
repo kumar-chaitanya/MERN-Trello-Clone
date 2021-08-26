@@ -19,13 +19,13 @@ function Project() {
         key={board.id}
         {...board}
         draggedID={isDragging && dragged.current.taskID}
-        isDragging={isDragging} /> )
+        isDragging={isDragging} />)
       }
       <AddInput placeholder="Enter Board Title" btnText="Create" btnClick={addNewBoard} />
     </div>
   }
   return (
-    data
+      data
   )
 }
 

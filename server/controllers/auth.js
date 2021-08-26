@@ -44,7 +44,7 @@ exports.loginUser = async (req, res) => {
         const authToken = jwt.sign({
           userId: user.id,
           email: user.email
-        }, 'randomSecret@123', { expiresIn: '5m' })
+        }, 'randomSecret@123', { expiresIn: '1h' })
 
         return res.status(200).json({ user, authToken })
       } catch (err) {
@@ -56,4 +56,29 @@ exports.loginUser = async (req, res) => {
   }
 
   return res.status(400).json({ message: 'All fields are required' })
+}
+
+exports.getUser = async (req, res) => {
+  const { authorization } = req.headers
+  if (!authorization) return res.status(401).json({ message: 'Authorization header is not present' })
+
+  const authToken = authorization.split(' ')[1]
+  if (!authToken) return res.status(401).json({ message: 'Authentication token is not present' })
+
+  try {
+    const { id, email } = jwt.verify(authToken, 'randomSecret@123')
+    const user = await User.findOne({id, email})
+
+    if(!user) return res.status(401).json({ message: 'Invalid User' })
+    return res.status(200).json({
+      user: {
+        username: user.username,
+        email: user.email
+      }
+    })
+  } catch (err) {
+    console.log(err)
+    if (err.message === 'jwt expired') return res.status(401).json({ message: 'AuthToken expired, please login again' })
+    return res.status(500).json({ message: err.message || 'Some error occurred, please try again' })
+  }
 }

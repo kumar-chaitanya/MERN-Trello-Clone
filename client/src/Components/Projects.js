@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { Grid } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core'
 
+import { isProtected } from '../hoc/isProtected'
 import ProjectInfo from './ProjectInfo'
 import AddInput from './Form-Inputs/AddInput'
+import { AuthContext } from '../Contexts/Auth.context'
 
 const useStyle = makeStyles({
   'ProjectContainer': {
@@ -12,6 +14,7 @@ const useStyle = makeStyles({
 })
 
 function Projects() {
+  const { authToken } = useContext(AuthContext)
   const [loading, setLoading] = useState(true)
   const [projects, setProjects] = useState()
   const classes = useStyle()
@@ -23,7 +26,8 @@ function Projects() {
       const res = await fetch(`http://localhost:5000/projects`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authToken}`
         },
         body: JSON.stringify({ name: inputVal })
       })
@@ -48,7 +52,8 @@ function Projects() {
       const res = await fetch(`http://localhost:5000/projects/${id}`, {
         method: 'PUT',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authToken}`
         },
         body: JSON.stringify({ name })
       })
@@ -70,7 +75,10 @@ function Projects() {
   const handleDeleteProject = async (id) => {
     try {
       const res = await fetch(`http://localhost:5000/projects/${id}`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${authToken}`
+        }
       })
 
       if (res.ok) {
@@ -86,7 +94,11 @@ function Projects() {
   }
 
   useEffect(() => {
-    fetch('http://localhost:5000/projects')
+    fetch('http://localhost:5000/projects', {
+      headers: {
+        'Authorization': `Bearer ${authToken}`
+      }
+    })
       .then(res => res.json())
       .then(data => {
         data = data.projects.map(project => {
@@ -124,4 +136,4 @@ function Projects() {
   )
 }
 
-export default Projects
+export default isProtected(Projects)

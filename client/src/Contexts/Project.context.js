@@ -1,16 +1,23 @@
-import React, { useState, useRef, useEffect, createContext } from 'react'
+import React, { useState, useRef, useEffect, createContext, useContext } from 'react'
 import { useParams } from 'react-router-dom'
+import { isProtected } from '../hoc/isProtected'
 
 import { useProjectReducer } from '../Reducers/project.reducer'
+import { AuthContext } from './Auth.context'
 
 export const ProjectContext = createContext()
 
-export const ProjectProvider = (props) => {
+const Provider = (props) => {
+  const { authToken } = useContext(AuthContext)
   const [project, dispatch] = useProjectReducer()
   const { id } = useParams()
 
   useEffect(() => {
-    fetch(`http://localhost:5000/projects/${id}`)
+    fetch(`http://localhost:5000/projects/${id}`, {
+      headers: {
+        'Authorization': `Bearer ${authToken}`
+      }
+    })
       .then(res => res.json())
       .then(data => {
         let project = {
@@ -53,7 +60,8 @@ export const ProjectProvider = (props) => {
       fetch(`http://localhost:5000/projects/${id}/boards/moveTask`, {
         method: 'PUT',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authToken}`
         },
         body: JSON.stringify(body)
       }).then(res => {
@@ -117,7 +125,8 @@ export const ProjectProvider = (props) => {
       const res = await fetch(`http://localhost:5000/projects/${id}/boards/${boardID}/task`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authToken}`
         },
         body: JSON.stringify({ content })
       })
@@ -139,7 +148,8 @@ export const ProjectProvider = (props) => {
       const res = await fetch(`http://localhost:5000/projects/${id}/boards/${boardID}/task/${taskID}`, {
         method: 'PUT',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authToken}`
         },
         body: JSON.stringify({ content })
       })
@@ -157,7 +167,10 @@ export const ProjectProvider = (props) => {
   const deleteTask = async (boardID, taskID) => {
     try {
       const res = await fetch(`http://localhost:5000/projects/${id}/boards/${boardID}/task/${taskID}`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${authToken}`
+        }
       })
 
       if (res.ok) dispatch({ type: 'DELETE_TASK', boardID, taskID })
@@ -172,7 +185,8 @@ export const ProjectProvider = (props) => {
     fetch(`http://localhost:5000/projects/${id}/boards`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${authToken}`
       },
       body: JSON.stringify({ title: board })
     }).then(res => {
@@ -190,7 +204,8 @@ export const ProjectProvider = (props) => {
       const res = await fetch(`http://localhost:5000/projects/${id}/boards/${boardID}`, {
         method: 'PUT',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authToken}`
         },
         body: JSON.stringify({ title })
       })
@@ -207,7 +222,10 @@ export const ProjectProvider = (props) => {
   const deleteBoard = async (boardID) => {
     try {
       const res = await fetch(`http://localhost:5000/projects/${id}/boards/${boardID}`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${authToken}`
+        }
       })
 
       if (res.ok) dispatch({ type: 'DELETE_BOARD', boardID })
@@ -227,3 +245,5 @@ export const ProjectProvider = (props) => {
     </ProjectContext.Provider>
   )
 }
+
+export const ProjectProvider = isProtected(Provider)
