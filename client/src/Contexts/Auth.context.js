@@ -8,8 +8,7 @@ export const AuthProvider = (props) => {
   const [auth, dispatch] = useAuthReducer()
 
   useEffect(() => {
-    // const authToken = JSON.parse(localStorage.getItem('authToken'))
-    const authToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MTI2Mzg5ZDg2ZmQ1ZjQwZTBlNjQ1ZDMiLCJlbWFpbCI6InRlc3RAdGVzdC5jb20iLCJpYXQiOjE2MzAwMDMwOTQsImV4cCI6MTYzMDAwNjY5NH0.5TQCKAsJCCsFfTyCkeAP6aTuDsS9iWy0mkMsEfyElaw'
+    const authToken = localStorage.getItem('authToken')
 
     if (!authToken) dispatch({ type: "AUTH_FAILURE" })
     else {
@@ -31,8 +30,14 @@ export const AuthProvider = (props) => {
     }
   }, [])
 
+  const login = ({user, authToken}) => {
+    dispatch({ type: "AUTH_SUCCESS", payload: { user, authToken } })
+    localStorage.setItem('authToken', authToken)
+  }
+
   const logout = () => {
     dispatch({ type: "AUTH_LOGOUT" })
+    localStorage.removeItem('authToken')
   }
 
   return (
@@ -41,6 +46,7 @@ export const AuthProvider = (props) => {
       isAuthenticated: auth.isAuthenticated,
       authLoading: auth.authLoading,
       authToken: auth.authToken,
+      login,
       logout
     }}>
       {props.children}

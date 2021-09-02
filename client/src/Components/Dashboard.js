@@ -4,6 +4,8 @@ import { makeStyles } from '@material-ui/styles'
 
 import Projects from './Projects'
 import Project from './Project'
+import Login from './Login'
+import Register from './Register'
 import { ProjectProvider } from '../Contexts/Project.context'
 
 const useStyles = makeStyles({
@@ -21,6 +23,12 @@ export default function Dashboard() {
 	return (
 		<div className={classes.dashboard}>
 			<Switch>
+				<Route path="/login" exact>
+					<Login />
+				</Route>
+				<Route path="/register" exact>
+					<Register />
+				</Route>
 				<Route path="/projects" exact>
 					<Projects />
 				</Route>

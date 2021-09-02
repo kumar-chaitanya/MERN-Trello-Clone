@@ -11,6 +11,10 @@ exports.registerUser = async (req, res) => {
     if (isValidEmail(email)) {
       try {
         const hashPwd = bcrypt.hashSync(password, saltRounds);
+
+        const existingUser = await User.findOne({ email })
+        if(existingUser) return res.status(500).json({ message: 'Email already exists' })
+
         const user = new User({
           username,
           email,
@@ -37,16 +41,16 @@ exports.loginUser = async (req, res) => {
     if (isValidEmail(email)) {
       try {
         const user = await User.findOne({ email })
-        if (!user) return res.status(404).json({ message: 'User not found' })
+        if (!user) return res.status(404).json({ message: 'Invalid Username or Password' })
 
-        if (!bcrypt.compareSync(password, user.password)) return res.status(404).json({ message: 'Incorrect Password' })
+        if (!bcrypt.compareSync(password, user.password)) return res.status(404).json({ message: 'Invalid Username or Password' })
 
         const authToken = jwt.sign({
           userId: user.id,
           email: user.email
-        }, 'randomSecret@123', { expiresIn: '1h' })
+        }, 'randomSecret@123', { expiresIn: '2m' })
 
-        return res.status(200).json({ user, authToken })
+        return res.status(200).json({ user: { username: user.username, email: user.email }, authToken })
       } catch (err) {
         console.log(err)
         return res.status(500).json({ message: err.message || 'Some error occurred, please try again' })
