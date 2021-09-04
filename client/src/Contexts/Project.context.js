@@ -20,27 +20,42 @@ const Provider = (props) => {
     })
       .then(res => res.json())
       .then(data => {
-        let project = {
-          projectId: id,
-          projectName: data.name,
-          boards: data.boards.map(board => {
-            let taskList = board.tasks.map(task => {
+        if (data.message) {
+          dispatch({ type: 'SET_ERROR', payload: data.message })
+          setTimeout(() => {
+            dispatch({ type: 'RESET_ERROR' })
+          }, 4000);
+        }
+        else {
+          let project = {
+            projectId: id,
+            projectName: data.name,
+            boards: data.boards.map(board => {
+              let taskList = board.tasks.map(task => {
+                return {
+                  id: task._id,
+                  content: task.content
+                }
+              })
+
               return {
-                id: task._id,
-                content: task.content
+                id: board._id,
+                title: board.title,
+                taskList
               }
             })
-
-            return {
-              id: board._id,
-              title: board.title,
-              taskList
-            }
-          })
+          }
+          dispatch({ type: 'LOAD_PROJECT', payload: project })
         }
-        dispatch({ type: 'LOAD_PROJECT', payload: project })
+
       })
-      .catch(err => console.log(err))
+      .catch(err => {
+        console.log(err)
+        dispatch({ type: 'SET_ERROR', payload: err.message })
+        setTimeout(() => {
+          dispatch({ type: 'RESET_ERROR' })
+        }, 4000);
+      })
   }, [])
 
   const [isDragging, setIsDragging] = useState(false)
@@ -71,6 +86,10 @@ const Provider = (props) => {
         }
       }).catch(err => {
         console.log(err)
+        dispatch({ type: 'SET_ERROR', payload: err.message })
+        setTimeout(() => {
+          dispatch({ type: 'RESET_ERROR' })
+        }, 4000);
       })
     }
 
@@ -138,6 +157,10 @@ const Provider = (props) => {
       }
     } catch (err) {
       console.log(err)
+      dispatch({ type: 'SET_ERROR', payload: err.message })
+      setTimeout(() => {
+        dispatch({ type: 'RESET_ERROR' })
+      }, 4000);
     }
   }
 
@@ -161,6 +184,10 @@ const Provider = (props) => {
       }
     } catch (err) {
       console.log(err)
+      dispatch({ type: 'SET_ERROR', payload: err.message })
+      setTimeout(() => {
+        dispatch({ type: 'RESET_ERROR' })
+      }, 4000);
     }
   }
 
@@ -176,6 +203,10 @@ const Provider = (props) => {
       if (res.ok) dispatch({ type: 'DELETE_TASK', boardID, taskID })
     } catch (err) {
       console.log(err)
+      dispatch({ type: 'SET_ERROR', payload: err.message })
+      setTimeout(() => {
+        dispatch({ type: 'RESET_ERROR' })
+      }, 4000);
     }
   }
 
@@ -194,7 +225,13 @@ const Provider = (props) => {
     }).then(board => {
       dispatch({ type: 'CREATE_BOARD', title: board.title, id: board._id })
     })
-      .catch(err => console.log(err))
+      .catch(err => {
+        console.log(err)
+        dispatch({ type: 'SET_ERROR', payload: err.message })
+        setTimeout(() => {
+          dispatch({ type: 'RESET_ERROR' })
+        }, 4000);
+      })
   }
 
   const updateBoard = async (boardID, title) => {
@@ -216,6 +253,10 @@ const Provider = (props) => {
       }
     } catch (err) {
       console.log(err)
+      dispatch({ type: 'SET_ERROR', payload: err.message })
+      setTimeout(() => {
+        dispatch({ type: 'RESET_ERROR' })
+      }, 4000);
     }
   }
 
@@ -231,6 +272,10 @@ const Provider = (props) => {
       if (res.ok) dispatch({ type: 'DELETE_BOARD', boardID })
     } catch (err) {
       console.log(err)
+      dispatch({ type: 'SET_ERROR', payload: err.message })
+      setTimeout(() => {
+        dispatch({ type: 'RESET_ERROR' })
+      }, 4000);
     }
   }
 

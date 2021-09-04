@@ -17,7 +17,6 @@ export const AuthProvider = (props) => {
           'Authorization': `Bearer ${authToken}`
         }
       }).then(res => {
-        console.log(res)
         if (!res.ok) dispatch({ type: "AUTH_FAILURE" })
         return res.json()
       }).then((data) => {

@@ -3,6 +3,7 @@ import { useFormik } from 'formik'
 import { makeStyles } from '@material-ui/styles'
 import { Link, useHistory } from 'react-router-dom'
 
+import Error from './Error'
 import validateEmail from '../utils/validateEmail'
 
 const initialValues = {
@@ -25,16 +26,6 @@ const validate = (values) => {
 }
 
 const useStyles = makeStyles({
-  'error': {
-    width: '600px',
-    margin: '12px auto',
-    background: 'red',
-    color: 'white',
-    padding: '12px',
-    fontSize: '14px',
-    textAlign: 'center',
-    wordSpacing: '2px'
-  },
   'form-container': {
     display: 'flex',
     flexDirection: 'column',
@@ -158,7 +149,7 @@ const Register = () => {
 
   return (
     <>
-      {formSumbitError && <p className={classes['error']}>{formSumbitError}</p>}
+      {formSumbitError && <Error message={formSumbitError} />}
       <div className={classes['form-container']}>
         <div className={classes['form-title']}>Register</div>
         <form onSubmit={handleSubmit} className={classes['form']}>

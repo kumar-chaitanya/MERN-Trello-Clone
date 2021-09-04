@@ -5,6 +5,7 @@ import { Link, useHistory } from 'react-router-dom'
 
 import validateEmail from '../utils/validateEmail'
 import { AuthContext } from '../Contexts/Auth.context'
+import Error from './Error'
 
 const initialValues = {
   email: '',
@@ -23,16 +24,6 @@ const validate = (values) => {
 }
 
 const useStyles = makeStyles({
-  'error': {
-    width: '600px',
-    margin: '12px auto',
-    background: 'red',
-    color: 'white',
-    padding: '12px',
-    fontSize: '14px',
-    textAlign: 'center',
-    wordSpacing: '2px'
-  },
   'form-container': {
     display: 'flex',
     flexDirection: 'column',
@@ -159,7 +150,7 @@ const Login = () => {
 
   return (
     <>
-      {formSumbitError && <p className={classes['error']}>{formSumbitError}</p>}
+      {formSumbitError && <Error message={formSumbitError} />}
       <div className={classes['form-container']}>
         <div className={classes['form-title']}>Login</div>
         <form onSubmit={handleSubmit} className={classes['form']}>

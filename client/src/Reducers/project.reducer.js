@@ -4,13 +4,14 @@ const initialState = {
   projectId: '',
   projectName: '',
   boards: [],
-  loading: true
+  loading: true,
+  error: ''
 }
 
 const projectReducer = (state, action) => {
   switch (action.type) {
     case "LOAD_PROJECT": {
-      return { ...action.payload, loading: false }
+      return { ...action.payload, loading: false, error: '' }
     }
 
     case "CREATE_BOARD": {
@@ -98,6 +99,21 @@ const projectReducer = (state, action) => {
 
       boards[boardIdx].taskList.splice(taskIdx, 1)
       return { ...state, boards: [...boards] }
+    }
+
+    case "SET_ERROR": {
+      return {
+        ...state,
+        loading: false,
+        error: action.payload
+      }
+    }
+
+    case "RESET_ERROR": {
+      return {
+        ...state,
+        error: ''
+      }
     }
 
     default:

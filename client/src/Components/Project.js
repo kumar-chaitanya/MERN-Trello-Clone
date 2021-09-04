@@ -3,6 +3,7 @@ import React, { useContext } from 'react'
 
 import { ProjectContext } from '../Contexts/Project.context'
 import Board from './Board'
+import Error from './Error'
 import AddInput from './Form-Inputs/AddInput'
 import '../Project.css'
 
@@ -10,10 +11,10 @@ import '../Project.css'
 function Project() {
   const { project, dragged, isDragging, addNewBoard } = useContext(ProjectContext)
 
-  let data
+  let data = null
   if (project.loading) {
     data = <div>Loading Project.......</div>
-  } else {
+  } else if(project.projectId) {
     data = <div className="Project">
       {project.boards.map(board => <Board
         key={board.id}
@@ -25,7 +26,10 @@ function Project() {
     </div>
   }
   return (
-      data
+    <>
+      {project.error && <Error message={project.error} />}
+      {data}
+    </>
   )
 }
 
