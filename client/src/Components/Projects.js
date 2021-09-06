@@ -6,10 +6,14 @@ import { isProtected } from '../hoc/isProtected'
 import ProjectInfo from './ProjectInfo'
 import AddInput from './Form-Inputs/AddInput'
 import { AuthContext } from '../Contexts/Auth.context'
+import Loader from './Loader'
+import Error from './Error'
 
 const useStyle = makeStyles({
   'ProjectContainer': {
-    padding: '24px'
+    padding: '24px',
+    width: '100%',
+    height: '100%'
   }
 })
 
@@ -17,7 +21,15 @@ function Projects() {
   const { authToken } = useContext(AuthContext)
   const [loading, setLoading] = useState(true)
   const [projects, setProjects] = useState()
+  const [error, setError] = useState('')
   const classes = useStyle()
+
+  const handleError = (errorMsg) => {
+    setError(errorMsg)
+    setTimeout(() => {
+      setError('')
+    }, 4000);
+  }
 
   const handleNewProject = async (inputVal) => {
     if (!inputVal) return
@@ -32,21 +44,24 @@ function Projects() {
         body: JSON.stringify({ name: inputVal })
       })
 
+      const data = await res.json()
       if (res.ok) {
-        const project = await res.json()
         setProjects((state) => [...state, {
-          id: project._id,
-          name: project.name,
-          createdAt: project.createdAt
+          id: data._id,
+          name: data.name,
+          createdAt: data.createdAt
         }])
+      } else {
+        handleError(data.message)
       }
     } catch (err) {
       console.log(err)
+      handleError(err.message)
     }
   }
 
   const handleUpdateProject = async (id, name) => {
-    if(!name) return
+    if (!name) return
 
     try {
       const res = await fetch(`http://localhost:5000/projects/${id}`, {
@@ -57,7 +72,7 @@ function Projects() {
         },
         body: JSON.stringify({ name })
       })
-
+    
       if (res.ok) {
         setProjects((state) => {
           state = [...state]
@@ -66,9 +81,13 @@ function Projects() {
           return [...state]
         })
         return true
+      } else {
+        const data = await res.json()
+        handleError(data.message)
       }
     } catch (err) {
       console.log(err)
+      handleError(err.message)
     }
   }
 
@@ -80,16 +99,20 @@ function Projects() {
           'Authorization': `Bearer ${authToken}`
         }
       })
-
+      
       if (res.ok) {
         setProjects((state) => {
           state = [...state]
           state.splice(state.findIndex(project => project.id === id), 1)
           return [...state]
         })
+      } else {
+        const data = await res.json()
+        handleError(data.message)
       }
     } catch (err) {
       console.log(err)
+      handleError(err.message)
     }
   }
 
@@ -101,28 +124,36 @@ function Projects() {
     })
       .then(res => res.json())
       .then(data => {
-        data = data.projects.map(project => {
-          return {
-            id: project._id,
-            name: project.name,
-            createdAt: project.createdAt
-          }
-        })
-        setProjects(data)
-        setLoading(false)
+        if (data.message) {
+          handleError(data.message)
+        }
+        else {
+          data = data.projects.map(project => {
+            return {
+              id: project._id,
+              name: project.name,
+              createdAt: project.createdAt
+            }
+          })
+          setProjects(data)
+          setLoading(false)
+        }
       })
-      .catch(err => console.log(err))
+      .catch(err => {
+        console.log(err)
+        handleError(err.message)
+      })
   }, [])
 
-  let data = <div>Loading Your Projects......</div>
+  let data = <Loader />
 
   if (!loading) {
     data = <>
-      {projects.map(project => <ProjectInfo 
-                                  {...project} 
-                                  key={project.id} 
-                                  handleUpdateProject={handleUpdateProject} 
-                                  handleDeleteProject={handleDeleteProject} />)}
+      {projects.map(project => <ProjectInfo
+        {...project}
+        key={project.id}
+        handleUpdateProject={handleUpdateProject}
+        handleDeleteProject={handleDeleteProject} />)}
       <Grid item lg={3}>
         <AddInput placeholder="Enter Project Name" btnText="Create" btnClick={handleNewProject} />
       </Grid>
@@ -130,9 +161,12 @@ function Projects() {
   }
 
   return (
-    <Grid className={classes['ProjectContainer']} container spacing={4}>
-      {data}
-    </Grid>
+    <>
+      {error && <Error message={error} />}
+      <Grid className={classes['ProjectContainer']} container spacing={4}>
+        {data}
+      </Grid>
+    </>
   )
 }
 

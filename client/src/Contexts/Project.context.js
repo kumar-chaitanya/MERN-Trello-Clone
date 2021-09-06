@@ -80,9 +80,11 @@ const Provider = (props) => {
         },
         body: JSON.stringify(body)
       }).then(res => {
-        console.log(res)
-        if (res.ok) {
-          console.log('Task successfully Moved')
+        if (!res.ok) {
+          dispatch({ type: 'SET_ERROR', payload: 'Some error occurred, please try again' })
+          setTimeout(() => {
+            dispatch({ type: 'RESET_ERROR' })
+          }, 4000);
         }
       }).catch(err => {
         console.log(err)
@@ -96,8 +98,6 @@ const Provider = (props) => {
     dragged.current = null
     dragItem.current.removeEventListener('dragend', handleDragEnd)
     dragItem.current = null
-
-    console.log('dragend')
   }
 
   const handleDragStart = (e, params) => {
@@ -108,8 +108,6 @@ const Provider = (props) => {
 
     dragItem.current.addEventListener('dragend', handleDragEnd)
 
-    console.log(params);
-
     setTimeout(() => {
       setIsDragging(true)
     }, 0)
@@ -119,7 +117,6 @@ const Provider = (props) => {
     e.preventDefault()
     e.dataTransfer.dropEffect = 'move'
     if (moveID !== dragged.current.taskID) {
-      console.log("Dragged item id", dragged, e.target)
       dispatch({
         type: 'MOVE_TASK',
         dragItemID: dragged.current.taskID,

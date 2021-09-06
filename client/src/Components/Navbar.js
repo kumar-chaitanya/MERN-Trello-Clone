@@ -10,6 +10,7 @@ const useStyles = makeStyles({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
+    background: 'rgba(0,0,0,0)'
   },
   navList: {
     '& *': {
@@ -28,10 +29,10 @@ function Navbar() {
   let navList = null
 
   if (authLoading) {
-    navList = <Typography>Loading...</Typography>
+    navList = <Typography>...</Typography>
   } else if (!authLoading && isAuthenticated) {
     navList = <>
-      <Typography>{user.username}</Typography>
+      <Typography style={{ cursor: 'text' }}>{user.username}'s Dashboard</Typography>
       <Typography>
         <Link to="/projects">My Projects</Link>
       </Typography>

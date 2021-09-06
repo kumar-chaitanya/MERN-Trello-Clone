@@ -8,6 +8,7 @@ exports.getAllProjects = async (req, res) => {
     return res.json({ projects })
   } catch (err) {
     console.log(err)
+    return res.status(500).json({ message: 'Some error has occurred please try again' })
   }
 }
 
@@ -42,6 +43,7 @@ exports.createProject = async (req, res) => {
     return res.status(201).json(project)
   } catch (err) {
     console.log(err)
+    return res.status(500).json({ message: 'Some error has occurred please try again' })
   }
 }
 

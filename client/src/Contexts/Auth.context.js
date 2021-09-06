@@ -1,4 +1,5 @@
 import React, { createContext, useEffect } from 'react'
+import { useHistory } from 'react-router-dom'
 
 import { useAuthReducer } from '../Reducers/auth.reducer'
 
@@ -6,6 +7,7 @@ export const AuthContext = createContext()
 
 export const AuthProvider = (props) => {
   const [auth, dispatch] = useAuthReducer()
+  const history = useHistory()
 
   useEffect(() => {
     const authToken = localStorage.getItem('authToken')
@@ -21,7 +23,6 @@ export const AuthProvider = (props) => {
         return res.json()
       }).then((data) => {
         if(data.user) dispatch({ type: "AUTH_SUCCESS", payload: { user: data.user, authToken } })
-        else console.log(data.message)
       }).catch(err => {
           console.log(err)
           dispatch({ type: "AUTH_FAILURE" })
@@ -37,6 +38,7 @@ export const AuthProvider = (props) => {
   const logout = () => {
     dispatch({ type: "AUTH_LOGOUT" })
     localStorage.removeItem('authToken')
+    history.push('/login')
   }
 
   return (

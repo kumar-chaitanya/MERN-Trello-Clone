@@ -1,5 +1,7 @@
 import React, { useContext } from 'react'
 
+import Loader from '../Components/Loader'
+import Error from '../Components/Error'
 import { AuthContext } from '../Contexts/Auth.context'
 
 export const isProtected = (Component) => {
@@ -8,11 +10,11 @@ export const isProtected = (Component) => {
     let toRender = null
 
     if(authLoading) {
-      toRender = 'Loading...'
+      toRender = <Loader />
     } else if(!authLoading && isAuthenticated) {
       toRender = <Component {...props}>{props.children}</Component>
     } else {
-      toRender = 'Please Login First'
+      toRender = <Error message={'Please Login First'} />
     }
   
     return toRender

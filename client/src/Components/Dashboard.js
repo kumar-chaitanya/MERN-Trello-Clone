@@ -10,10 +10,25 @@ import { ProjectProvider } from '../Contexts/Project.context'
 
 const useStyles = makeStyles({
 	dashboard: {
-		width: '100%',
-		height: '90vh',
-		background: 'cadetblue',
-		overflowX: 'scroll'
+		position: 'relative',
+		width: '100vw',
+		height: 'calc(100vh - 64px)',
+		overflowX: 'scroll',
+		scrollbarWidth: 'normal',
+		scrollbarColor: '#777 #555',
+		'&::-webkit-scrollbar-thumb': {
+			backgroundColor: '#7775',
+			'&:hover': {
+				backgroundColor: '#7773'
+			}
+		},
+		'&::-webkit-scrollbar-track': {
+			backgroundColor: '#5555'
+		},
+		'&::-webkit-scrollbar': {
+			width: '10px',
+			height: '10px'
+		}
 	}
 })
 
