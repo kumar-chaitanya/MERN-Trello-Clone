@@ -151,6 +151,11 @@ const Provider = (props) => {
         const task = await res.json()
         dispatch({ type: 'ADD_TASK', boardID, content: task.content, id: task._id })
         return true
+      } else {
+        dispatch({ type: 'SET_ERROR', payload: 'Some error occurred, please try again' })
+        setTimeout(() => {
+          dispatch({ type: 'RESET_ERROR' })
+        }, 4000);
       }
     } catch (err) {
       console.log(err)
@@ -178,6 +183,11 @@ const Provider = (props) => {
         const task = await res.json()
         dispatch({ type: 'UPDATE_TASK', boardID, content: task.content, taskID: task._id })
         return true
+      } else {
+        dispatch({ type: 'SET_ERROR', payload: 'Some error occurred, please try again' })
+        setTimeout(() => {
+          dispatch({ type: 'RESET_ERROR' })
+        }, 4000);
       }
     } catch (err) {
       console.log(err)
@@ -198,6 +208,12 @@ const Provider = (props) => {
       })
 
       if (res.ok) dispatch({ type: 'DELETE_TASK', boardID, taskID })
+      else {
+        dispatch({ type: 'SET_ERROR', payload: 'Some error occurred, please try again' })
+        setTimeout(() => {
+          dispatch({ type: 'RESET_ERROR' })
+        }, 4000);
+      }
     } catch (err) {
       console.log(err)
       dispatch({ type: 'SET_ERROR', payload: err.message })
@@ -219,6 +235,12 @@ const Provider = (props) => {
       body: JSON.stringify({ title: board })
     }).then(res => {
       if (res.ok) return res.json()
+      else {
+        dispatch({ type: 'SET_ERROR', payload: 'Some error occurred, please try again' })
+        setTimeout(() => {
+          dispatch({ type: 'RESET_ERROR' })
+        }, 4000);
+      }
     }).then(board => {
       dispatch({ type: 'CREATE_BOARD', title: board.title, id: board._id })
     })
@@ -247,6 +269,11 @@ const Provider = (props) => {
       if (res.ok) {
         dispatch({ type: 'UPDATE_BOARD', boardID, title })
         return true
+      } else {
+        dispatch({ type: 'SET_ERROR', payload: 'Some error occurred, please try again' })
+        setTimeout(() => {
+          dispatch({ type: 'RESET_ERROR' })
+        }, 4000);
       }
     } catch (err) {
       console.log(err)
@@ -267,6 +294,12 @@ const Provider = (props) => {
       })
 
       if (res.ok) dispatch({ type: 'DELETE_BOARD', boardID })
+      else {
+        dispatch({ type: 'SET_ERROR', payload: 'Some error occurred, please try again' })
+        setTimeout(() => {
+          dispatch({ type: 'RESET_ERROR' })
+        }, 4000);
+      }
     } catch (err) {
       console.log(err)
       dispatch({ type: 'SET_ERROR', payload: err.message })

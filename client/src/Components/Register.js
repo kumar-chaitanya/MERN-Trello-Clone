@@ -84,7 +84,7 @@ const useStyles = makeStyles({
   'form-submit': {
     width: '50%',
     margin: 'auto',
-    background: '#008000bd',
+    background: '#0165b1cf',
     border: 'none',
     outline: 'none',
     borderRadius: '4px',
@@ -93,7 +93,7 @@ const useStyles = makeStyles({
     padding: '8px',
     cursor: 'pointer',
     '&:hover': {
-      background: 'green'
+      background: '#0165b1fa'
     }
   },
   'message': {

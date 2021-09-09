@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core'
 
 import { ProjectContext } from '../Contexts/Project.context'
 import Task from './Task'
-import AddInput from './Form-Inputs/AddInput'
+import AddArea from './Form-Inputs/AddArea'
 
 const useStyle = makeStyles({
   'TaskContainer': {
@@ -45,7 +45,7 @@ function TaskList({ boardID, taskList, draggedID }) {
       </ul>
        <>
           {loading && <p>Adding New Task......</p>}
-          <AddInput placeholder="Enter Your Task" btnText="Create" btnClick={handleNewTask} />
+          <AddArea placeholder="Enter Your Task" btnText="Create" btnClick={handleNewTask} />
       </>
     </div>
   )

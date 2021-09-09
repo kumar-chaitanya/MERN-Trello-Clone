@@ -6,7 +6,7 @@ import TaskList from './TaskList'
 
 const useStyle = makeStyles({
 	'Board': {
-		background: '#e0e0e0',
+		background: '#e0e0e06e',
 		margin: '0 16px',
 		padding: '8px',
 		borderRadius: '4px',

@@ -31,6 +31,7 @@ mongoose.connect('mongodb+srv://admin:kumar@mern-trello-clone.2v8to.mongodb.net/
       console.log('Listening on Port ' + PORT)
     })
   }
+  else console.log(err)
 })
 
 

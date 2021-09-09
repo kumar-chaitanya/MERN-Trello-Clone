@@ -25,6 +25,9 @@ const useStyle = makeStyles({
       display: 'flex',
       justifyContent: 'space-between'
     }
+  },
+  Button: {
+    background: 'linear-gradient(90deg, rgba(46,0,86,0.919502835313813) 0%, rgba(116,9,121,0.9363095580028886) 50%, rgba(137,0,200,0.919502835313813) 100%)'
   }
 })
 
@@ -64,7 +67,7 @@ export default function ProjectInfo({ name, id, createdAt, handleUpdateProject, 
           </Typography>
         </CardContent>
         <CardActions>
-          <Button size="small" variant='contained' color='primary'>
+          <Button size="small" variant='contained' color='primary' className={classes['Button']}>
             <Link style={{ textDecoration: 'none', fontSize: '10px', color: 'white' }} to={`/projects/${id}`}>
               See Project
             </Link>

@@ -18,6 +18,7 @@ const useStyle = makeStyles({
     },
     '& > textarea': {
       width: '100%',
+      height: '80px',
       padding: '8px',
       lineHeight: '1.4em',
       border: 'none',
@@ -26,6 +27,15 @@ const useStyle = makeStyles({
     },
     '& > textarea:focus': {
       outline: 'solid green 1px'
+    },
+    '& > textarea::-webkit-scrollbar-thumb': {
+      backgroundColor: '#7775',
+      '&:hover': {
+        backgroundColor: '#7773'
+      }
+    },
+    '& > textarea::-webkit-scrollbar': {
+      width: '4px',
     }
   }
 })
@@ -44,7 +54,7 @@ export default function UpdateArea(props) {
 
   return (
     <div className={classes['UpdateContainer']}>
-      <textarea onChange={handleInputChange} rows={8} defaultValue={input} autoFocus>
+      <textarea onChange={handleInputChange} defaultValue={input} autoFocus>
       </textarea>
       <span>
         <CheckButton onClick={handleCheck} />
