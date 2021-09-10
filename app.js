@@ -18,10 +18,10 @@ const PORT = process.env.PORT || 5000
 app.use(cors())
 app.use(express.json())
 
-app.use('/auth', authRoutes)
-app.use('/projects', isAuthenticated, projectRoutes)
-app.use('/projects/:id/boards', isAuthenticated, boardRoutes)
-app.use('/projects/:projectId/boards/:boardId/task', isAuthenticated, taskRoutes)
+app.use('/api/auth', authRoutes)
+app.use('/api/projects', isAuthenticated, projectRoutes)
+app.use('/api/projects/:id/boards', isAuthenticated, boardRoutes)
+app.use('/api/projects/:projectId/boards/:boardId/task', isAuthenticated, taskRoutes)
 
 if(process.env.NODE_ENV === 'production') {
   app.use(express.static('client/build'))

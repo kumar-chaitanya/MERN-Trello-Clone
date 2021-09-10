@@ -13,7 +13,7 @@ const Provider = (props) => {
   const { id } = useParams()
 
   useEffect(() => {
-    fetch(`/projects/${id}`, {
+    fetch(`/api/projects/${id}`, {
       headers: {
         'Authorization': `Bearer ${authToken}`
       }
@@ -72,7 +72,7 @@ const Provider = (props) => {
         taskId: dragged.current.taskID,
         position: dragged.current.position
       }
-      fetch(`/projects/${id}/boards/moveTask`, {
+      fetch(`/api/projects/${id}/boards/moveTask`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -138,7 +138,7 @@ const Provider = (props) => {
     if (!content) return
 
     try {
-      const res = await fetch(`/projects/${id}/boards/${boardID}/task`, {
+      const res = await fetch(`/api/projects/${id}/boards/${boardID}/task`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -170,7 +170,7 @@ const Provider = (props) => {
     if (!content) return
 
     try {
-      const res = await fetch(`/projects/${id}/boards/${boardID}/task/${taskID}`, {
+      const res = await fetch(`/api/projects/${id}/boards/${boardID}/task/${taskID}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -200,7 +200,7 @@ const Provider = (props) => {
 
   const deleteTask = async (boardID, taskID) => {
     try {
-      const res = await fetch(`/projects/${id}/boards/${boardID}/task/${taskID}`, {
+      const res = await fetch(`/api/projects/${id}/boards/${boardID}/task/${taskID}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${authToken}`
@@ -226,7 +226,7 @@ const Provider = (props) => {
   const addNewBoard = (board) => {
     if (!board) return
 
-    fetch(`/projects/${id}/boards`, {
+    fetch(`/api/projects/${id}/boards`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -257,7 +257,7 @@ const Provider = (props) => {
     if (!title) return
 
     try {
-      const res = await fetch(`/projects/${id}/boards/${boardID}`, {
+      const res = await fetch(`/api/projects/${id}/boards/${boardID}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -286,7 +286,7 @@ const Provider = (props) => {
 
   const deleteBoard = async (boardID) => {
     try {
-      const res = await fetch(`/projects/${id}/boards/${boardID}`, {
+      const res = await fetch(`/api/projects/${id}/boards/${boardID}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${authToken}`

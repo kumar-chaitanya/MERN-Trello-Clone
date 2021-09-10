@@ -35,7 +35,7 @@ function Projects() {
     if (!inputVal) return
 
     try {
-      const res = await fetch(`/projects`, {
+      const res = await fetch(`/api/projects`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -64,7 +64,7 @@ function Projects() {
     if (!name) return
 
     try {
-      const res = await fetch(`/projects/${id}`, {
+      const res = await fetch(`/api/projects/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -93,7 +93,7 @@ function Projects() {
 
   const handleDeleteProject = async (id) => {
     try {
-      const res = await fetch(`/projects/${id}`, {
+      const res = await fetch(`/api/projects/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${authToken}`
@@ -117,7 +117,7 @@ function Projects() {
   }
 
   useEffect(() => {
-    fetch('/projects', {
+    fetch('/api/projects', {
       headers: {
         'Authorization': `Bearer ${authToken}`
       }
