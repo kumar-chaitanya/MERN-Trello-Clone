@@ -6,6 +6,7 @@ import Projects from './Projects'
 import Project from './Project'
 import Login from './Login'
 import Register from './Register'
+import NotFound from './NotFound'
 import { ProjectProvider } from '../Contexts/Project.context'
 
 const useStyles = makeStyles({
@@ -38,6 +39,7 @@ export default function Dashboard() {
 	return (
 		<div className={classes.dashboard}>
 			<Switch>
+				<Route path="/" exact render={() => <></>} />
 				<Route path="/login" exact>
 					<Login />
 				</Route>
@@ -52,6 +54,7 @@ export default function Dashboard() {
 						<Project />
 					</ProjectProvider>
 				</Route>
+				<Route component={NotFound} />
 			</Switch>
 		</div>
 	)
