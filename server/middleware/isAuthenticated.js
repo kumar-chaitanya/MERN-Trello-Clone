@@ -9,7 +9,7 @@ module.exports = async (req, res, next) => {
   if (!authToken) return res.status(401).json({ message: 'Authentication token is not present' })
 
   try {
-    const { id, email } = jwt.verify(authToken, 'randomSecret@123')
+    const { id, email } = jwt.verify(authToken, process.env.SECRET)
     const user = await User.findOne({id, email})
 
     if(!user) return res.status(401).json({ message: 'Invalid User' })

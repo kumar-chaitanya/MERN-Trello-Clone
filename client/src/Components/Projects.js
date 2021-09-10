@@ -35,7 +35,7 @@ function Projects() {
     if (!inputVal) return
 
     try {
-      const res = await fetch(`http://localhost:5000/projects`, {
+      const res = await fetch(`/projects`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -64,7 +64,7 @@ function Projects() {
     if (!name) return
 
     try {
-      const res = await fetch(`http://localhost:5000/projects/${id}`, {
+      const res = await fetch(`/projects/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -93,7 +93,7 @@ function Projects() {
 
   const handleDeleteProject = async (id) => {
     try {
-      const res = await fetch(`http://localhost:5000/projects/${id}`, {
+      const res = await fetch(`/projects/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${authToken}`
@@ -117,7 +117,7 @@ function Projects() {
   }
 
   useEffect(() => {
-    fetch('http://localhost:5000/projects', {
+    fetch('/projects', {
       headers: {
         'Authorization': `Bearer ${authToken}`
       }

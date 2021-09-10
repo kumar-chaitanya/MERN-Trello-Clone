@@ -33,7 +33,7 @@ export const AuthProvider = (props) => {
 
     if (!authToken) dispatch({ type: "AUTH_FAILURE" })
     else {
-      fetch('http://localhost:5000/auth/login', {
+      fetch('/auth/login', {
         headers: {
           'Authorization': `Bearer ${authToken}`
         }

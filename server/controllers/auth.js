@@ -51,7 +51,7 @@ exports.loginUser = async (req, res) => {
         const authToken = jwt.sign({
           userId: user.id,
           email: user.email
-        }, 'randomSecret@123', { expiresIn: `${minutes}m` })
+        }, process.env.SECRET, { expiresIn: `${minutes}m` })
 
         return res.status(200).json({ user: { username: user.username, email: user.email }, authToken, expiresIn })
       } catch (err) {
@@ -73,7 +73,7 @@ exports.getUser = async (req, res) => {
   if (!authToken) return res.status(401).json({ message: 'Authentication token is not present' })
 
   try {
-    const { id, email } = jwt.verify(authToken, 'randomSecret@123')
+    const { id, email } = jwt.verify(authToken, process.env.SECRET)
     const user = await User.findOne({id, email})
 
     if(!user) return res.status(401).json({ message: 'Invalid User' })
