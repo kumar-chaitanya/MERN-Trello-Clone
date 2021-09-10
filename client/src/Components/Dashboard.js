@@ -47,7 +47,7 @@ export default function Dashboard() {
 				<Route path="/projects" exact>
 					<Projects />
 				</Route>
-				<Route path="/projects/:id">
+				<Route path="/projects/:id" exact>
 					<ProjectProvider>
 						<Project />
 					</ProjectProvider>
