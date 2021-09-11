@@ -15,7 +15,8 @@ This application is developed using **MERN** stack, with MongoDB, Express and No
 2. _Create, Read, Update and Delete Projects._
 3. _Create, Read, Update and Delete Boards._
 4. _Create, Read, Update and Delete Tasks._
-5. _Prioratize tasks, using drag and drop, between boards or among the same board._  
+5. _Prioratize tasks, using drag and drop, between boards or among the same board._
+
 **The code is developed using the industry standard coding techniques like: HOC's, Contexts, Reducers, Functional Components on the Frontend and Controllers, Routes and Middleware on the Backend.**  
 ### Setup
 To run the app yourself, follow these steps:
